@@ -15,22 +15,7 @@
     } else if (passwword1 == "") {
       console.log("Please Enter Email");
     } else {
-      mydata = {
-        userName: username,
-        userEmail: email,
-        userPass1: password1,
-        confirmPass: password2,
-        userLogo: logo,
-      };
-
-      $.ajax({
-        url: "{% url 'register' %}",
-        method: "POST",
-        data: mydata,
-        success: function (data) {
-          console.log(data);
-        },
-      });
+      mydata = {};
     }
   });
 </script>

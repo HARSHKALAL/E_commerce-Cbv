@@ -1,20 +1,46 @@
-{%extends 'enroll/base.html' %} {%block content%} {% load static %} {% comment%}
-<form method="POST">
-  {% csrf_token %} {{form.as_p}}
-  <button type="submit" class="btn btn-success">Create</button>
-</form>
-{% comment %} {% endcomment %}
+{%extends 'enroll/base.html' %} {%block content%} {% load static %}
 
-<form
-  action=""
-  method="POST"
-  class="form-control"
-  enctype="multipart/form-data"
->
-  {% csrf_token %} {% for field in form %}
-  <label> {{field.label_tag}} </label>
-  {{field}} {% endfor %}
-  <button type="submit" class="btn btn-success" id="btncreate">Create</button>
+<h1>Registration Page</h1>
+<div>
+<form class="row g-3" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div>
+  <div class="col-md-6">
+    <label for="" class="form-label">Username</label>
+    {{form.username}}
+    {% if form.errors.username %}
+    <label class="text-danger">{{form.errors.username}}</label>
+    {% endif %}
+  </div>
+   <div class="col-md-6">
+    <label for="" class="form-label">Email</label>
+    {{form.email}}
+    {% if form.errors.email %}
+    <label class="text-danger">{{form.errors.email}}</label>
+    {% endif %}
+  </div>
+  
+  <div class="col-md-12">
+    <label for="" class="form-label">Password</label>
+    {{form.password1}}
+    {% if form.errors.password1 %}
+    <label class="text-danger">{{form.errors.password1}}</label>
+    {% endif %}
+  </div>
+  <div class="col-md-12">
+    <label for="" class="form-label"> Confirm Password</label>
+    {{form.password2}}
+    {% if form.errors.password2 %}
+    <label class="text-danger">{{form.errors.password2}}</label>
+    {% endif %}
+  </div>
+  <div class="mb-3 ">
+  <label for="" class="form-label">Upload Logo </label>
+    {{form.logo}}
+  </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </div>
 </form>
-
-{% include "enroll/Ajax.html" %} {% endblock %}
+</div>
+{% endblock %}

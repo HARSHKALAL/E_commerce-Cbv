@@ -1,18 +1,21 @@
 from django.shortcuts import render
-from .forms import NewUserForm
+from .forms import Userform
 
-# Create your views here.
-
+def homepage(request):
+    return render(request,"enroll/homepage.html")
 def signup(request):
+    form=Userform()
     if request.method == "POST":
-        form = NewUserForm(request.POST,request.FILES)
+        form=Userform(request.POST,request.FILES)
+        print(request.POST)
         if form.is_valid():
-            userName=request.POST['userName']
-            userEmail=request.POST['userEmail']
-            userPass1=request.POST['userPass1']            
-            confirmPass=request.POST['confirmPass']
-            userLogo=request.POST['userLogo']
-            
-            form.save()
-            form = NewUserForm()
-    return render(request,'enroll/register.html',{'form':form})
+            print(form)
+            form.save()  
+            print(form)  
+            form=Userform()
+    else:
+        form=Userform()
+    return render(request,"enroll/register.html",{'form':form})
+
+def signin(request):
+    pass
