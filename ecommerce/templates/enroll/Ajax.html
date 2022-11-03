@@ -1,0 +1,36 @@
+<script>
+  $("#btncreate").click(function () {
+    console.log("Cicked Successfuly");
+
+    let username = $("#usernameid").val();
+    let email = $("#emailid").val();
+    let password1 = $("#id_password1").val();
+    let password2 = $("#id_password2").val();
+    let logo = $("#logoid").val();
+
+    if (username == "") {
+      console.log("Please Enter UserName");
+    } else if (email == "") {
+      console.log("Please Enter Email");
+    } else if (passwword1 == "") {
+      console.log("Please Enter Email");
+    } else {
+      mydata = {
+        userName: username,
+        userEmail: email,
+        userPass1: password1,
+        confirmPass: password2,
+        userLogo: logo,
+      };
+
+      $.ajax({
+        url: "{% url 'register' %}",
+        method: "POST",
+        data: mydata,
+        success: function (data) {
+          console.log(data);
+        },
+      });
+    }
+  });
+</script>
