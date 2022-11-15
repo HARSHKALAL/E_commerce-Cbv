@@ -1,12 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import Userform
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate,login
+from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
+from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect
-from .models import User
+from .models import User,category
 
-def homepage(request):
-        return render(request,"enroll/homepage.html")
+def homepage(request):    
+    print(request.user.id)
+    print(request.user)
+    category_list=category.objects.all()
+    return render(request,"enroll/homepage.html",{'name':request.user,'category_list':category_list})
+
 def signup(request):
     form=Userform()
     if request.method == "POST":
@@ -29,7 +33,29 @@ def signin(request):
         user=authenticate(username=username,password=password)
         if user is not None:
             login(request,user)
-            return HttpResponseRedirect("/homepage/")
+            
+            return HttpResponseRedirect("/homepage/")        
     else:
         loginform=AuthenticationForm()
     return render(request,'enroll/login.html',{'loginform':loginform})
+
+def user_logout(request):
+    print(request)
+    logout(request)
+    return HttpResponseRedirect('/signin/')
+
+def changepassword(request):
+    if request.method == "POST":
+        change_pass=PasswordChangeForm(user=request.user,data=request.POST)
+        if change_pass.is_valid():
+            change_pass.save()
+            update_session_auth_hash(request,change_pass.user)
+            return HttpResponseRedirect('/homepage/')
+    else:
+        change_pass=PasswordChangeForm(user=request.user)
+    return render(request,'enroll/changepassword.html',{'change_pass':change_pass})
+
+def editprofile(request,id):
+    
+    pass
+

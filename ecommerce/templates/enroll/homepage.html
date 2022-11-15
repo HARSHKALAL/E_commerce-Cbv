@@ -1,1 +1,104 @@
-{%extends 'enroll/base.html' %} {%block content%} {%endblock%}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E commerce</title>
+    <link rel="stylesheet" href="{% static 'enroll/css/bootstrap.css' %}" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{% static 'enroll/jss/jquery.js' %}"></script>
+    <script src="{% static 'enroll/jss/popper.js' %}"></script>
+    <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
+  </head>
+  <style>
+    .dropdown:hover .dropdown-menu {
+      display: block;
+    }
+  </style>
+  <body>
+    <div class="">
+      <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand"><img src="{{ name.logo.url }}" height="30px" /></a>
+          <div class="mx-auto">
+            <form class="d-flex">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-primary" type="submit">
+                Search
+              </button>
+            </form>
+          </div> 
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{name}}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-primary">
+              <li><a class="dropdown-item" href="{url ''}">Edit Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'changepassword' %}">Change Password</a></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+
+            </ul>
+          </div>
+            </div>
+        </div>
+      </nav>
+    </div>  
+
+<div class="pos-f-t">
+  <div class="collapse" id="navbarToggleExternalContent">
+    <div class="bg-dark p-4">
+      <h4 class="text-white">Collapsed content</h4>
+      <span class="text-muted">Toggleable via the navbar brand.</span>
+    </div>
+  </div>  
+  <nav class="navbar navbar-dark bg-dark">
+  <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+  Category
+  </button>
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+    {% for category in category_list %}
+    <li><a class="dropdown-item active" href="#">{{category.name}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+  </nav>
+
+<div class="container">
+<div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://cdn.pixabay.com/photo/2017/12/15/19/07/ecommerce-3021581__340.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="data:image/jpeg;base64,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" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="https://media.istockphoto.com/id/1206800961/photo/online-shopping-and-payment-man-using-tablet-with-shopping-cart-icon-digital-marketing.jpg?s=612x612&w=0&k=20&c=qG_9JB9ll4P5to97_HVxzMqhhzF0Gi1nWM_hNeiotbk=" class="d-block w-100" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+</div>
+
+
+
+</div>
+
+{%block content%} {% endblock %}
+</body>
+</html>
