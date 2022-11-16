@@ -16,31 +16,70 @@
     <div class="container">
       <div class="row">
         <form class="row g-3" method="POST" enctype="multipart/form-data">
-          <h1 align="center">Signup</h1>
+          <h1 align="center">Edit Profile</h1>
           {% csrf_token %}
+          <div class="container mt-3">
+            <center>
+              {% if user.logo %}
+              <img
+                src="{{ user.logo.url }}"
+                class="rounded-circle"
+                alt=""
+                width="304"
+                height="236"
+              />
+              {% else %}
+              <img
+                src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png "
+                class="rounded-circle"
+                alt=""
+                width="304"
+                height="236"
+              />
+              {% endif %} {{edit_form.logo}}
+            </center>
+          </div>
           <div class="col-md-6">
             <label for="" class="form-label">Username</label>
-            {{form.username}} {% if form.errors.username %}
-            <label class="text-danger">{{form.errors.username}}</label>
+            {{edit_form.username}} {% if edit_form.errors.username %}
+            <label class="text-danger">{{edit_form.errors.username}}</label>
             {% endif %}
           </div>
           <div class="col-md-6">
             <label for="" class="form-label">Email</label>
-            {{form.email}} {% if form.errors.email %}
-            <label class="text-danger">{{form.errors.email}}</label>
+            {{edit_form.email}} {% if edit_form.errors.email %}
+            <label class="text-danger">{{edit_form.errors.email}}</label>
             {% endif %}
-          </div>
-          <div class="mb-3">
-            <label for="" class="form-label">Upload Logo </label>
-            {{form.logo}}
           </div>
           <div class="col-12">
             <center>
-              <button type="submit" class="btn btn-primary">Register</button>
+              <button type="submit" class="btn btn-primary">Update</button>
             </center>
           </div>
         </form>
       </div>
     </div>
+
+    {% comment %}
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="container mt-3">
+        <center>
+          <img
+            src="{{ user.logo.url }}"
+            class="rounded-circle"
+            alt=""
+            width="304"
+            height="236"
+          />
+        </center>
+      </div>
+      {{edit_form.as_p}}
+      <center>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </center>
+    </form>
+    {% endcomment %}
   </body>
 </html>

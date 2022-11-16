@@ -20,8 +20,15 @@
   <body>
     <div class="">
       <nav class="navbar navbar-dark bg-primary">
+      {% if user.is_authenticated %}
         <div class="container-fluid">
-          <a class="navbar-brand"><img src="{{ name.logo.url }}" height="30px" /></a>
+
+          {% if user.logo %}
+          <a class="navbar-brand"><img src="{{ user.logo.url }}" height="30px" /></a>
+          {% else %}
+          <a class="navbar-brand"><img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" height="30px" /></a>
+          {% endif %}
+         
           <div class="mx-auto">
             <form class="d-flex">
               <input
@@ -34,20 +41,45 @@
                 Search
               </button>
             </form>
-          </div> 
+          </div>  
           <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{name}}
+            {{user}}
             </button>
             <ul class="dropdown-menu dropdown-menu-primary">
-              <li><a class="dropdown-item" href="{url ''}">Edit Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'editprofile' %}">Edit Profile</a></li>
               <li><a class="dropdown-item" href="{% url 'changepassword' %}">Change Password</a></li>
               <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-
             </ul>
+          </div>
+       
+            </div>
+        </div>
+        {% else %}  
+        <div class="container-fluid">
+          <div class="mx-auto">
+            <form class="d-flex">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-primary" type="submit">
+                Search
+              </button>
+            </form>
+          </div>  
+          <div>
+          <button class="btn btn-primary"  type="submit" >
+              <a class="btn btn-primary" href="{% url 'signin' %}">Login</a>
+          </button>
           </div>
             </div>
         </div>
+        
+        {%endif %}
+
       </nav>
     </div>  
 
@@ -70,6 +102,9 @@
   </ul>
 </div>
   </nav>
+
+
+
 
 <div class="container">
 <div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
@@ -94,9 +129,6 @@
   </button>
 </div>
 </div>
-
-
-
 </div>
 
 {%block content%} {% endblock %}

@@ -1,15 +1,13 @@
 from django.shortcuts import render,redirect
-from .forms import Userform
+from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect
-from .models import User,category
+from .models import User,Category
 
 def homepage(request):    
-    print(request.user.id)
-    print(request.user)
-    category_list=category.objects.all()
-    return render(request,"enroll/homepage.html",{'name':request.user,'category_list':category_list})
+    category_list=Category.objects.all()
+    return render(request,"enroll/homepage.html",{'category_list':category_list})
 
 def signup(request):
     form=Userform()
@@ -19,7 +17,6 @@ def signup(request):
         if form.is_valid():
             print(form)
             form.save()  
-            print(form)  
             form=Userform()
     else:
         form=Userform()
@@ -35,6 +32,7 @@ def signin(request):
             login(request,user)
             
             return HttpResponseRedirect("/homepage/")        
+
     else:
         loginform=AuthenticationForm()
     return render(request,'enroll/login.html',{'loginform':loginform})
@@ -46,16 +44,26 @@ def user_logout(request):
 
 def changepassword(request):
     if request.method == "POST":
-        change_pass=PasswordChangeForm(user=request.user,data=request.POST)
+        change_pass=PasswordChangeForm(data=request.POST,user=request.user)
         if change_pass.is_valid():
             change_pass.save()
-            update_session_auth_hash(request,change_pass.user)
             return HttpResponseRedirect('/homepage/')
     else:
         change_pass=PasswordChangeForm(user=request.user)
     return render(request,'enroll/changepassword.html',{'change_pass':change_pass})
 
-def editprofile(request,id):
-    
-    pass
+def editprofile(request):
+    if request.method == 'POST':
+        edit_form=EditProfileForm(request.POST,request.FILES,instance=request.user)
+        print("edit")
+        if edit_form.is_valid():  
+            print("edit")
+            edit_form.save()  
+            print("Update success")
+            return HttpResponseRedirect("/homepage/")  
+        else:
+            print(edit_form.errors)
+    else:
+        edit_form=EditProfileForm(instance=request.user)
+    return render(request,'enroll/editprofile.html',{'edit_form':edit_form})
 
