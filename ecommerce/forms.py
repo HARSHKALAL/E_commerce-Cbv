@@ -10,18 +10,17 @@ class Userform(UserCreationForm):
     )
     class Meta:
         model = User
-        fields = ["username",'email','password1','password2',"logo"]
+        fields = ["username",'email','password1','password2']
         widgets = {
         'username':forms.TextInput(attrs={'class':'form-control my-1','id':"usernameid",'placeholder':'Enter UserName'}),
         'email':forms.EmailInput(attrs={'class':'form-control my-1','id':"emailid",'placeholder':'Enter Email'}),
-        'logo':forms.FileInput(attrs={'class':'form-control','id':"logoid"}),      
+        # 'logo':forms.FileInput(attrs={'class':'form-control','id':"logoid"}),      
         }  
 class EditProfileForm(UserChangeForm):
     class Meta:
         model=User
-        fields=['username','email','logo']
+        fields=['username','email']
         widgets = {
         'username':forms.TextInput(attrs={'class':'form-control my-1','id':"usernameid",'placeholder':'Enter UserName'}),
         'email':forms.EmailInput(attrs={'class':'form-control my-1','id':"emailid",'placeholder':'Enter Email'}),
-        'logo':forms.FileInput(attrs={'class':'form-control','id':"logoid"}),      
         }  

@@ -3,11 +3,11 @@ from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect
-from .models import User,Category
+from .models import User,Category,Product
 
-def homepage(request):    
-    category_list=Category.objects.all()
-    return render(request,"enroll/homepage.html",{'category_list':category_list})
+def homepage(request):  
+    categories=Category.objects.filter(is_deleted=False)
+    return render(request,"enroll/homepage.html",{'categories':categories})
 
 def signup(request):
     form=Userform()
@@ -38,7 +38,7 @@ def signin(request):
     return render(request,'enroll/login.html',{'loginform':loginform})
 
 def user_logout(request):
-    print(request)
+    
     logout(request)
     return HttpResponseRedirect('/signin/')
 

@@ -16,6 +16,11 @@
     .dropdown:hover .dropdown-menu {
       display: block;
     }
+
+    .parentdiv{
+    border: 1px solid black;
+    height: 200px;
+    }
   </style>
   <body>
     <div class="">
@@ -77,7 +82,7 @@
           </div>
             </div>
         </div>
-        
+  
         {%endif %}
 
       </nav>
@@ -96,15 +101,12 @@
   Category
   </button>
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-    {% for category in category_list %}
+    {% for category in categories %}
     <li><a class="dropdown-item active" href="#">{{category.name}}</a></li>
     {% endfor %}
   </ul>
 </div>
   </nav>
-
-
-
 
 <div class="container">
 <div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
@@ -129,7 +131,30 @@
   </button>
 </div>
 </div>
+</div>  
+{% for category in categories %}
+<div class="row">
+  <div class="col-md-3 parentdiv">    
+    <a class="dropdown-item active" href="#">{{category.name}}</a>
+    <br>
+  <button class="btn btn-primary" type="button">
+  View ALL
+  </button>
+  </div>
+  {% for product in category.products.all %}
+  <div class="col-md-3 parentdiv">
+    <img
+      src="{{ product.image.url }}"
+      alt=" "
+      width="225"
+      height="200"
+  />   
+  {{product.name}}
+  </div>  
+  {% endfor %}
+  {% endfor %}
 </div>
+  
 
 {%block content%} {% endblock %}
 </body>
