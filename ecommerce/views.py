@@ -5,8 +5,12 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.http import HttpResponseRedirect
 from .models import User,Category,Product
 
+
 def homepage(request):  
-    categories=Category.objects.filter(is_deleted=False)
+    category_name = request.GET.get('cat')    
+    categories=Category.objects.filter(is_deleted=False) 
+    if category_name:
+        categories=categories.filter(name__icontains=category_name)
     return render(request,"enroll/homepage.html",{'categories':categories})
 
 def signup(request):
@@ -66,4 +70,10 @@ def editprofile(request):
     else:
         edit_form=EditProfileForm(instance=request.user)
     return render(request,'enroll/editprofile.html',{'edit_form':edit_form})
+
+def product(request,id):
+    product=Product.objects.get(id=id)
+    print(product.name)
+    return render(request,'enroll/product.html',{'product':product})
+    
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E commerce</title>
+    <link rel="stylesheet" href="{% static 'enroll/css/product.css' %}" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{% static 'enroll/jss/jquery.js' %}"></script>
+    <script src="{% static 'enroll/jss/popper.js' %}"></script>
+    <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
+
+    <style>
+        .stock{
+            color: green;
+}        
+    </style>
+</head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="container-fliud">
+          <div class="wrapper row">
+            <div class="preview col-md-6">
+              <div class="preview-pic tab-content">
+                <div class="tab-pane active" id="pic-1">
+                  <img src="{{product.image.url}}" />
+                </div>
+              </div>
+            </div>
+            <center>
+              <div class="details col-md-6">
+                <h3 class="product-title">{{product.name}}</h3>
+
+                <p class="product-description">{{product.description}}</p>
+                <h4 class="price">
+                  Discounted price: <span></span>
+                </h4>
+                <h4 class="price">
+                  Original price: <span>{{product.price}}</span>
+                </h4>
+                  <strong>(87 votes)</strong>
+                {% if  product.stock_quantity > 0 %}
+                <p class="vote">
+                  <h1 class="stock"> Available Stock </h1>
+                </p>
+                {% else %}
+                <p class="vote">
+                  <h1 class="stock"> Out Of Stock </h1>
+                </p>
+                {% endif %}
+
+                <div class="action">
+                  <button class="add-to-cart btn btn-default" type="button">
+                    add to cart
+                  </button>
+                  <button class="like btn btn-default" type="button">
+                    <span class="fa fa-heart"></span>
+                  </button>
+                </div>
+              </div>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

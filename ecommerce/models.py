@@ -38,12 +38,14 @@ class Product(models.Model):
     sold_by=models.ManyToManyField(MerchantFirm)
     created_at=models.DateTimeField(auto_now_add=True)
     price=models.DecimalField(max_digits=10, decimal_places=2)
-    discounted_price=models.DecimalField(max_digits=10,decimal_places=2)
-    Category = models.ManyToManyField(Category,related_name='products')
+    discount_percentage=models.DecimalField(max_digits=10,decimal_places=2,null=True)
+    category = models.ManyToManyField(Category,related_name='products')
     stock_quantity = models.IntegerField(null=True,blank=True)
-
     def __str__(self):
         return self.name
+
+    
+
 
 
 

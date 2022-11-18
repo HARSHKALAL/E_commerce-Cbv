@@ -18,7 +18,7 @@
     }
 
     .parentdiv{
-    border: 1px solid black;
+    
     height: 200px;
     }
   </style>
@@ -31,7 +31,7 @@
           {% if user.logo %}
           <a class="navbar-brand"><img src="{{ user.logo.url }}" height="30px" /></a>
           {% else %}
-          <a class="navbar-brand"><img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" height="30px" /></a>
+          <a class="navbar-brand" href="{% url 'homepage'%}"><img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/flipkart-plus_8d85f4.png" height="30px" /></a>
           {% endif %}
          
           <div class="mx-auto">
@@ -102,7 +102,7 @@
   </button>
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
     {% for category in categories %}
-    <li><a class="dropdown-item active" href="#">{{category.name}}</a></li>
+    <li><a class="dropdown-item active" href="/homepage/?cat={{category.name}}" >{{category.name}}</a></li>
     {% endfor %}
   </ul>
 </div>
@@ -143,18 +143,19 @@
   </div>
   {% for product in category.products.all %}
   <div class="col-md-3 parentdiv">
-    <img
+    <a href="{% url 'product' product.id %}" ><img
       src="{{ product.image.url }}"
       alt=" "
       width="225"
-      height="200"
-  />   
+      height="150"
+  /></a>
+  <div>
   {{product.name}}
+  </div>
   </div>  
   {% endfor %}
   {% endfor %}
 </div>
-  
 
 {%block content%} {% endblock %}
 </body>
