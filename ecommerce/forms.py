@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,UserChangeForm
-from .models import User
+from .models import User,Product
 class Userform(UserCreationForm):
     password1 = forms.CharField(
         widget=forms.PasswordInput(attrs={'class':'form-control', 'type':'password', 'align':'center','placeholder':'Enter Password'}),
@@ -24,3 +24,10 @@ class EditProfileForm(UserChangeForm):
         'username':forms.TextInput(attrs={'class':'form-control my-1','id':"usernameid",'placeholder':'Enter UserName'}),
         'email':forms.EmailInput(attrs={'class':'form-control my-1','id':"emailid",'placeholder':'Enter Email'}),
         }  
+
+
+
+class AddProductForm(forms.ModelForm):
+    class Meta:
+        model=Product
+        fields = '__all__'

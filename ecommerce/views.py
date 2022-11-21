@@ -1,10 +1,9 @@
 from django.shortcuts import render,redirect
-from .forms import Userform,EditProfileForm
+from .forms import Userform,EditProfileForm,AddProductForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect
 from .models import User,Category,Product
-
 
 def homepage(request):  
     category_name = request.GET.get('cat')    
@@ -33,16 +32,13 @@ def signin(request):
         password = request.POST['password'] 
         user=authenticate(username=username,password=password)
         if user is not None:
-            login(request,user)
-            
+            login(request,user)          
             return HttpResponseRedirect("/homepage/")        
-
     else:
         loginform=AuthenticationForm()
     return render(request,'enroll/login.html',{'loginform':loginform})
 
 def user_logout(request):
-    
     logout(request)
     return HttpResponseRedirect('/signin/')
 
@@ -76,4 +72,16 @@ def product(request,id):
     print(product.name)
     return render(request,'enroll/product.html',{'product':product})
     
+
+def addproduct(request):      
+    if request.method == 'POST':
+        add_product_form=AddProductForm(request.POST,request.FILES)
+        if add_product_form.is_valid():
+            add_product_form.save()
+            return HttpResponseRedirect("/homepage/")
+        else:
+            print(add_product_form.errors)
+    else:
+        add_product_form=AddProductForm()
+    return render(request,"enroll/addproduct.html",{'add_product_form':add_product_form})
 

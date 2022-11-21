@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
+
+{% load filtertags %}
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,7 +19,11 @@
         .stock{
             color: green;
 }        
-    </style>
+.Discounted_price
+{
+  color: red;
+}            
+</style>
 </head>
   <body>
     <div class="container">
@@ -35,13 +42,18 @@
                 <h3 class="product-title">{{product.name}}</h3>
 
                 <p class="product-description">{{product.description}}</p>
+                
                 <h4 class="price">
-                  Discounted price: <span></span>
+                 Discounted price <span>{{product|showdiscountprice}}</span>
                 </h4>
                 <h4 class="price">
-                  Original price: <span>{{product.price}}</span>
+                  Original price: <span>{{product.price}}</span><br>
+                 
+                 
+                  <div class="Discounted_price">
+                  ({{product.discount_percentage}}% off)
+                  </div>
                 </h4>
-                  <strong>(87 votes)</strong>
                 {% if  product.stock_quantity > 0 %}
                 <p class="vote">
                   <h1 class="stock"> Available Stock </h1>
