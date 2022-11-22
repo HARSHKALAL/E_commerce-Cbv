@@ -72,16 +72,36 @@ def product(request,id):
     print(product.name)
     return render(request,'enroll/product.html',{'product':product})
     
-
 def addproduct(request):      
+    # if request.method == 'POST':
+    #     add_product_form=AddProductForm(request.POST,request.FILES)
+    #     if add_product_form.is_valid():
+    #         add_product_form.save()
+    #         return HttpResponseRedirect("/homepage/")
+    #     else:
+    #         print(add_product_form.errors)
+    # else:
     if request.method == 'POST':
-        add_product_form=AddProductForm(request.POST,request.FILES)
-        if add_product_form.is_valid():
-            add_product_form.save()
-            return HttpResponseRedirect("/homepage/")
-        else:
-            print(add_product_form.errors)
-    else:
-        add_product_form=AddProductForm()
+        print(request.POST)
+        p_name=request.POST['p_name']
+        p_text=request.POST['p_text']
+        p_description=request.POST['p_description']
+        p_image=request.POST['p_image']
+        p_sold_by=request.POST['p_sold_by']
+        p_price=request.POST['p_price']
+        p_discount_percentage=request.POST['p_discount_percentage']
+        p_category=request.POST['p_category']
+        p_stock_quantity=request.POST['p_stock_quantity']
+
+
+        pro=Product.objects.create(name=p_name,text=p_text,description=p_description,image=p_image,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
+        pro.category.add(p_category)
+        pro.save()
+        pro.sold_by.add(p_sold_by)
+        pro.save()
+        return HttpResponseRedirect('/homepage/')
+        # pro=Product(name=p_name,tex=p_text,description=p_description,image=p_image,sold_by=p_sold_by,price=p_price,discount_percentage=p_discount_percentage,category=p_category,stock_quantity=p_stock_quantity)
+
+    add_product_form=AddProductForm()
     return render(request,"enroll/addproduct.html",{'add_product_form':add_product_form})
 

@@ -11,14 +11,108 @@
     <script src="{% static 'enroll/jss/jquery.js' %}"></script>
     <script src="{% static 'enroll/jss/popper.js' %}"></script>
     <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
+    <script>
+
+       
+
+    </script>
   </head>
   <body>
-    <form class="form-control" method="POST" enctype="multipart/form-data">
+    <div class="container">
       <h1 align="center">Add Product</h1>
-      {% csrf_token %} {{add_product_form.as_p}}
+      {% csrf_token %}
+      <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Enter Product name" id="p_name" />
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Enter Text" id="p_text"/>
+        </div>
+      </div>
+<br>
+    <div class="row">
+        <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Enter Description" id="p_description"/>
+      </div>
+      
+      <div class="col-md-6">
+        <form id="add-prop">
+        <input  type="file"  class="form-control" placeholder="Choose File" id="p_image"/>
+        </form>
+      </div>
+    </div>
+<br>
+  <div class="row">
+        <div class="col-md-6">
+<select class="form-select" aria-label="Default select example" id="sold_by">
+  <option selected>Sold By</option>
+  {% for product in add_product_form.sold_by %}
+    <option>{{product}}</option>
+    {% endfor %}
+</select>
+      </div>
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Price" id="p_price"/>
+      </div>
+    </div>
+<br>
+  <div class="row">      
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Discount Percentage" id="p_discount_percentage"/>
+      </div>
+        <div class="col-md-6">    
+  <select class="form-select" aria-label="Default select example" id="p_category">
+    <option selected>Category</option>
+    {% for product in add_product_form.category %}
+    <option>{{product}}</option>
+    {% endfor %}
+  </select>
+</div>
+    </div>
+<br>
+  <div class="row">      
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Stock Quantity" id="stock_quantity"/>
+      </div>
+    </div>
+<br>
       <center>
-        <button type="submit" class="btn btn-primary">Add Product</button>
+        <button type="button" class="btn btn-primary" id="add_product">Add Product</button>
       </center>
-    </form>
+    </div>
   </body>
+  <script>    
+
+  $("#add_product").click(function (){
+  console.log("save button cicked")
+  let name=$('#p_name').val();    
+  let text=$('#p_text').val();    
+  let description=$('#p_description').val();    
+  let image=$('#p_image').val();    
+  let sold_by=$('#sold_by').val();    
+  let price=$('#p_price').val();    
+  let discount_percentage=$('#p_discount_percentage').val();    
+  let category=$('#p_category').val();    
+  let stock_quantity=$('#stock_quantity').val();    
+  var token =  $('input[name="csrfToken"]').attr('value'); 
+  
+  
+  if (name == "") {
+    console.log("please Fill the details")
+} else {
+
+  add _product ={csrfmiddlewaretoken: '{{ csrf_token }}',p_name:name,p_text:text,p_description:description,p_image:file,p_sold_by:sold_by,p_price:price,p_discount_percentage:discount_percentage,p_category:category,p_stock_quantity:stock_quantity}  
+  $.ajax({
+    type: 'POST',
+    url: "{% url 'addproduct' %}",
+    data:add_product,
+    success:function(pro){ 
+    console.log("Data submitted Successfully")
+    window.location.href="/homepage/"
+  }
+    });
+}
+  })
+  </script>
 </html>

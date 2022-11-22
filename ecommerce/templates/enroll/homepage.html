@@ -109,9 +109,6 @@
 <div>
 <a href = "{% url 'addproduct' %}"><button>add pro</button></a>
 </div>
-
-
-
 </nav>
 <div class="container">
 <div id="carouselExampleControls" class="carousel slide mt-5" data-bs-ride="carousel">
@@ -155,13 +152,12 @@
       height="150"
   /></a>
   <div>
-  {{product.name}}
+  {{product.name}}                                            
   </div>
   </div>  
   {% endfor %}
   {% endfor %}
 </div>
-
 {%block content%} {% endblock %}
 </body>
 </html>
