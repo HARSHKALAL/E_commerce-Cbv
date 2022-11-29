@@ -45,6 +45,11 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class Carousel(models.Model):
+    image=models.ImageField(upload_to="carousel/",blank=True,null=True)
+
+    # def __str__(self):
+    #     return self.image
     
 
 

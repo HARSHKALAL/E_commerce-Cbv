@@ -1,16 +1,18 @@
 from django.shortcuts import render,redirect
-from .forms import Userform,EditProfileForm,AddProductForm
+from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
-from django.http import HttpResponseRedirect
-from .models import User,Category,Product
+from django.http import HttpResponseRedirect,HttpResponse
+from .models import User,Category,Product,MerchantFirm,Carousel
 
 def homepage(request):  
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
+    carousel_image=Carousel.objects.order_by('image')[0:3]
+
     if category_name:
         categories=categories.filter(name__icontains=category_name)
-    return render(request,"enroll/homepage.html",{'categories':categories})
+    return render(request,"enroll/homepage.html",{'categories':categories,"carousel_image":carousel_image})
 
 def signup(request):
     form=Userform()
@@ -72,36 +74,27 @@ def product(request,id):
     print(product.name)
     return render(request,'enroll/product.html',{'product':product})
     
-def addproduct(request):      
-    # if request.method == 'POST':
-    #     add_product_form=AddProductForm(request.POST,request.FILES)
-    #     if add_product_form.is_valid():
-    #         add_product_form.save()
-    #         return HttpResponseRedirect("/homepage/")
-    #     else:
-    #         print(add_product_form.errors)
-    # else:
-    if request.method == 'POST':
-        print(request.POST)
-        p_name=request.POST['p_name']
-        p_text=request.POST['p_text']
-        p_description=request.POST['p_description']
-        p_image=request.POST['p_image']
-        p_sold_by=request.POST['p_sold_by']
-        p_price=request.POST['p_price']
-        p_discount_percentage=request.POST['p_discount_percentage']
-        p_category=request.POST['p_category']
-        p_stock_quantity=request.POST['p_stock_quantity']
+def addproduct(request): 
+    solds_by=MerchantFirm.objects.all()
+    category=Category.objects.all()
 
+    if request.method == 'POST':
+        p_name=request.POST['name']
+        p_text=request.POST['text']
+        p_description=request.POST['description']
+        p_image=request.FILES['image']
+        p_sold_by=request.POST['sold_by']
+        p_price=request.POST['price']
+        p_discount_percentage=request.POST['discount_percentage']
+        p_category=request.POST['category']
+        p_stock_quantity=request.POST['stock_quantity']
 
         pro=Product.objects.create(name=p_name,text=p_text,description=p_description,image=p_image,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
         pro.category.add(p_category)
         pro.save()
         pro.sold_by.add(p_sold_by)
-        pro.save()
-        return HttpResponseRedirect('/homepage/')
-        # pro=Product(name=p_name,tex=p_text,description=p_description,image=p_image,sold_by=p_sold_by,price=p_price,discount_percentage=p_discount_percentage,category=p_category,stock_quantity=p_stock_quantity)
+        pro.save()  
+        return HttpResponse("created")
 
-    add_product_form=AddProductForm()
-    return render(request,"enroll/addproduct.html",{'add_product_form':add_product_form})
+    return render(request,"enroll/addproduct.html",{'solds_by':solds_by,'category':category})
 

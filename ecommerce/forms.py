@@ -25,9 +25,3 @@ class EditProfileForm(UserChangeForm):
         'email':forms.EmailInput(attrs={'class':'form-control my-1','id':"emailid",'placeholder':'Enter Email'}),
         }  
 
-
-
-class AddProductForm(forms.ModelForm):
-    class Meta:
-        model=Product
-        fields = '__all__'
