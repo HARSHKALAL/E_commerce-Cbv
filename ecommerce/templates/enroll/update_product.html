@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Product</title>
+    <link rel="stylesheet" href="{% static 'enroll/css/bootstrap.css' %}" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{% static 'enroll/jss/jquery.js' %}"></script>
+    <script src="{% static 'enroll/jss/popper.js' %}"></script>
+    <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
+    <script>
+    </script>
+  </head>
+  <body>
+
+    <div class="container">
+      <h1 align="center">Update Product</h1>
+      {% csrf_token %}
+      <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Enter Product name" id="p_name" value={{product.name}} />
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Enter Text" id="p_text" value={{product.text}}/>
+        </div>
+      </div>
+<br>
+    <div class="row">
+        <div class="col-md-6">
+        <input type="text" class="form-control" placeholder="Enter Description" id="p_description"/ value={{product.description}}>
+      </div>
+      
+      <div class="col-md-6">
+        <form id="add-prop">
+        <input  type="file"  class="form-control" placeholder="Choose File" id="p_image"/ value={{product.image}}>
+        </form>
+      </div>
+    </div>
+<br>
+  <div class="row">
+        <div class="col-md-6">
+          <select class="form-select" aria-label="Default select example" id="sold_by">
+  
+  <option selected>Sold By</option>
+ 
+  {% for product in solds_by %}
+    <option>{{product.firm_name}}</option>
+    {% endfor %}
+</select>
+<div>
+    {% for p_soldby in product.sold_by.all %}
+    <span>{{p_soldby.firm_name}}<span style="color:red;cursor:pointer" onclick="sold_byCancell({{p_soldby.id}},{{product.id}})">x</span></span>
+    {% endfor %}
+  </div>
+
+      </div>
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Price" id="p_price"/ value={{product.price}}>
+      </div>
+    </div>
+<br>
+  <div class="row">      
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Discount Percentage" id="p_discount_percentage"/ value={{product.discount_percentage}}>
+      </div>
+        <div class="col-md-6">    
+  <select class="form-select" aria-label="Default select example" id="p_category">
+    
+    <option selected>Category</option>
+    {% for cat in category %}
+    <option>{{cat.name}}</option>
+    {% endfor %}
+  </select>
+  <div>
+    {% for p_category in product.category.all%}
+    <span id="cat-{{p_category.id}}-{{product.id}}">{{p_category.name}}<span style="color:red;cursor:pointer" onclick="categoeyCancell({{p_category.id}},{{product.id}})">x</span></span>
+    {% endfor %}
+  </div>
+</div>
+    </div>
+<br>
+  <div class="row">      
+
+      <div class="col-md-6">
+        <input type="number" class="form-control" placeholder="Enter Stock Quantity" id="stock_quantity"/ value={{product.stock_quantity}}>
+      </div>
+    </div>
+<br>
+      <center>
+        <button type="button" class="btn btn-primary" id="add_product">Update Product</button>
+      </center>
+    </div>
+  </body>
+  <script>
+    
+function categoeyCancell(id,p_id){
+    console.log(id)  
+    console.log(p_id)
+
+   $.ajax({
+    type: 'GET',
+    url: `/remove_category/${id}/${p_id}`,
+    success:function(remove_category){ 
+    console.log("Data submitted Successfully")
+    //$(`#cat-${id}-${p_id}`).remove();
+    location.reload() 
+  }
+    }); 
+}
+
+function sold_byCancell(id,p_id){
+    console.log(id)
+    console.log(p_id)
+
+  $.ajax({
+    type: 'GET',
+    url: `/remove_sold_by/${id}/${p_id}`,
+    success:function(remove_sold_by){ 
+        console.log("Data submitted Successfully")
+        location.reload()
+    }
+    }); 
+
+}
+
+
+
+   
+</script>
+</html>

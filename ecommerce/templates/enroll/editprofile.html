@@ -53,27 +53,5 @@
         </form>
       </div>
     </div>
-
-    {% comment %}
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-
-      <div class="container mt-3">
-        <center>
-          <img
-            src="{{ user.logo.url }}"
-            class="rounded-circle"
-            alt=""
-            width="304"
-            height="236"
-          />
-        </center>
-      </div>
-      {{edit_form.as_p}}
-      <center>
-        <button type="submit" class="btn btn-primary">Update</button>
-      </center>
-    </form>
-    {% endcomment %}
   </body>
 </html>

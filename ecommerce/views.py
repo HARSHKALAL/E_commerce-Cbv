@@ -71,7 +71,6 @@ def editprofile(request):
 
 def product(request,id):
     product=Product.objects.get(id=id)
-    print(product.name)
     return render(request,'enroll/product.html',{'product':product})
     
 def addproduct(request): 
@@ -98,3 +97,24 @@ def addproduct(request):
 
     return render(request,"enroll/addproduct.html",{'solds_by':solds_by,'category':category})
 
+def update_product(request,id):
+    solds_by=MerchantFirm.objects.all()
+    category=Category.objects.all()
+    
+    product=Product.objects.get(id=id)
+    if request.method =="POST":
+        cat_id=request.POST['id']
+        print(cat_id)
+    else:
+        pass    
+    return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product':product})
+
+def remove_category(request,id,p_id):
+    product=Product.objects.get(id=p_id)
+    product.category.remove(id)    
+    return HttpResponse("Deleted")
+
+def remove_sold_by(request,id,p_id):
+    product=Product.objects.get(id=p_id)
+    product.sold_by.remove(id)    
+    return HttpResponse("Deleted")
