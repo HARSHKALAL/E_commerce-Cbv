@@ -43,12 +43,14 @@
 <br>
   <div class="row">
         <div class="col-md-6">
-          <select class="form-select" aria-label="Default select example" id="sold_by">
+          <select class="form-select" aria-label="Default select example" id="sold_by" multiple>
   
-  <option selected>Sold By</option>
- 
+{% for p_soldby in product.sold_by.all %}
+ <option  selected>{{p_soldby.firm_name}}</option>
+{% endfor %}
+
   {% for product in solds_by %}
-    <option>{{product.firm_name}}</option>
+  <option value={{product.id}}>{{product.firm_name}}</option>
     {% endfor %}
 </select>
 <div>
@@ -68,11 +70,14 @@
         <input type="number" class="form-control" placeholder="Enter Discount Percentage" id="p_discount_percentage"/ value={{product.discount_percentage}}>
       </div>
         <div class="col-md-6">    
-  <select class="form-select" aria-label="Default select example" id="p_category">
+  <select class="form-select" aria-label="Default select example" id="p_category" multiple>
+
     
-    <option selected>Category</option>
+    {% for p_category in product.category.all%}
+    <option selected>{{p_category.name}}</option>  
+    {% endfor %}
     {% for cat in category %}
-    <option>{{cat.name}}</option>
+    <option value={{cat.id}}>{{cat.name}}</option>
     {% endfor %}
   </select>
   <div>
@@ -91,12 +96,75 @@
     </div>
 <br>
       <center>
-        <button type="button" class="btn btn-primary" id="add_product">Update Product</button>
+        <button type="button" class="btn btn-primary" id="update_product" onclick="update_data({{product.id}})">Update Product</button>
       </center>
     </div>
   </body>
   <script>
-    
+
+  var form_data = new FormData(); 
+  $("#p_image").on("change", function() {
+  var file = this.files[0];
+  form_data.append("image",file);
+  console.log(file)
+  })
+
+ function update_data(id){
+  console.log("save button cicked")
+  let name=$('#p_name').val();    
+  let text=$('#p_text').val();    
+  let description=$('#p_description').val();    
+  let image=$('#p_image').val();    
+  let sold_by=$('#sold_by').val();  
+  let price=$('#p_price').val();    
+  let category=$('#p_category').val();
+  let discount_percentage=$('#p_discount_percentage').val();    
+  let stock_quantity=$('#stock_quantity').val();  
+  
+  var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+  if (name == "") {
+    console.log("please Fill the details")
+} else {
+
+  category_array=[];
+  sold_byArray=[];
+  for (let i = 0; i < category.length; i++) {
+      var cat_id  = parseInt(category[i])
+      category_array.push(cat_id)
+    }
+  for (let i = 0; i < sold_by.length; i++) {
+      var sold_byId  = parseInt(sold_by[i])
+      sold_byArray.push(sold_byId)
+    }
+  var my_arr_cat = JSON.stringify(category_array)
+  var my_arr_sold_by = JSON.stringify(sold_byArray)
+
+  form_data.append("csrfmiddlewaretoken", csrf_token);
+  form_data.append("name", name);
+  form_data.append("text",text);
+  form_data.append("description",description);
+  form_data.append("sold_by",my_arr_sold_by);
+  form_data.append("price",price);
+  form_data.append("category_list",my_arr_cat);
+  form_data.append("discount_percentage",discount_percentage);
+  form_data.append("stock_quantity",stock_quantity);
+  console.log("data show")
+
+  $.ajax({
+    type: 'POST',
+    url: `/update_product/${id}/`,
+    cache:false,
+    contentType: false,
+    processData: false,
+    data:form_data,
+    success:function(product){ 
+    console.log("Update submitted Successfully")
+    window.location.href="/homepage/"
+  }
+    });
+}
+  }
+
 function categoeyCancell(id,p_id){
     console.log(id)  
     console.log(p_id)
@@ -124,8 +192,9 @@ function sold_byCancell(id,p_id){
         location.reload()
     }
     }); 
-
 }
+
+
 
 
 

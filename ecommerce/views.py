@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import User,Category,Product,MerchantFirm,Carousel
+import json
 
 def homepage(request):  
     category_name = request.GET.get('cat')    
@@ -99,15 +100,48 @@ def addproduct(request):
 
 def update_product(request,id):
     solds_by=MerchantFirm.objects.all()
-    category=Category.objects.all()
-    
+    category=Category.objects.all()    
     product=Product.objects.get(id=id)
-    if request.method =="POST":
-        cat_id=request.POST['id']
-        print(cat_id)
-    else:
-        pass    
+
+    if request.method == 'POST':
+        print(request.POST)
+        p_name=request.POST['name']
+        p_text=request.POST['text']
+        p_description=request.POST['description']
+        p_image=request.FILES['image']
+        sold_by_old=request.POST['sold_by']
+        p_price=request.POST['price']
+        p_discount_percentage=request.POST['discount_percentage']
+        cat_old=request.POST['category_list']
+        p_stock_quantity=request.POST['stock_quantity']
+
+
+        cat_updated = json.loads(cat_old)
+        sold_by_updated = json.loads(sold_by_old)
+
+             
+        pro=Product.objects.filter(id=id)
+        pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
+        pro=pro.first()
+        if p_image:
+            pro.image=p_image
+            pro.save()
+
+        if cat_updated:
+            breakpoint()
+            pro.category.add(cat_updated)
+            pro.save()
+        
+        if sold_by_updated:
+            pro.sold_by.set(sold_by_updated)
+            pro.save()
+
+    print("Data Received")    
     return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product':product})
+
+def delete_product(request,id):
+    delete_product=Product.objects.get(id=id).delete()
+    return HttpResponseRedirect("/homepage/")
 
 def remove_category(request,id,p_id):
     product=Product.objects.get(id=p_id)

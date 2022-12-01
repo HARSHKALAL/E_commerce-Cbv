@@ -104,9 +104,6 @@
   let stock_quantity=$('#stock_quantity').val();  
     
   var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
-  
-
-
   if (name == "") {
     console.log("please Fill the details")
 } else {
@@ -123,7 +120,6 @@
   console.log("data show")
   console.log(form_data)
 
-  
   $.ajax({
     type: 'POST',
     url: "{% url 'addproduct' %}",
