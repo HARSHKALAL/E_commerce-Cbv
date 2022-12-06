@@ -3,7 +3,7 @@ from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect,HttpResponse
-from .models import User,Category,Product,MerchantFirm,Carousel
+from .models import User,Category,Product,MerchantFirm,Carousel,Cart
 import json
 
 def homepage(request):  
@@ -103,6 +103,8 @@ def update_product(request,id):
     category=Category.objects.all()    
     product=Product.objects.get(id=id)
 
+    print(product.category.all().values_list('id'))
+
     if request.method == 'POST':
         print(request.POST)
         p_name=request.POST['name']
@@ -113,23 +115,27 @@ def update_product(request,id):
         p_price=request.POST['price']
         p_discount_percentage=request.POST['discount_percentage']
         cat_old=request.POST['category_list']
+        print(cat_old)
         p_stock_quantity=request.POST['stock_quantity']
 
 
         cat_updated = json.loads(cat_old)
         sold_by_updated = json.loads(sold_by_old)
 
-             
+        print(cat_updated)
+
         pro=Product.objects.filter(id=id)
         pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
         pro=pro.first()
+        
+        
+    
         if p_image:
             pro.image=p_image
             pro.save()
 
         if cat_updated:
-            breakpoint()
-            pro.category.add(cat_updated)
+            pro.category.set(cat_updated)
             pro.save()
         
         if sold_by_updated:
@@ -152,3 +158,19 @@ def remove_sold_by(request,id,p_id):
     product=Product.objects.get(id=p_id)
     product.sold_by.remove(id)    
     return HttpResponse("Deleted")
+
+
+def cart_product(request,id):
+    print(id)
+    print(request.user.id)
+    cart=Cart.objects.get_or_create(user_id=request.user.id,product_id=id)
+    return HttpResponse("Created Successfully")
+
+
+def view_cart(request):
+    print(request.user)
+    cart_view=Cart.objects.filter(user=request.user.id)
+    
+    for i in cart_view:
+        print(i.product.price)    
+    return render(request,"enroll/cart.html")

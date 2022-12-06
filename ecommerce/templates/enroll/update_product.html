@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
+
+{% load is_selected %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,7 +17,7 @@
     </script>
   </head>
   <body>
-
+    <form method="POST">
     <div class="container">
       <h1 align="center">Update Product</h1>
       {% csrf_token %}
@@ -45,12 +47,12 @@
         <div class="col-md-6">
           <select class="form-select" aria-label="Default select example" id="sold_by" multiple>
   
-{% for p_soldby in product.sold_by.all %}
+{% comment %} {% for p_soldby in product.sold_by.all %}
  <option  selected>{{p_soldby.firm_name}}</option>
-{% endfor %}
+{% endfor %} {% endcomment %}
 
-  {% for product in solds_by %}
-  <option value={{product.id}}>{{product.firm_name}}</option>
+  {% for sold in solds_by %}
+  <option value={{sold.id}} {%if product|selectedsold_by:sold %} selected {% endif %}>{{sold.firm_name}}</option>
     {% endfor %}
 </select>
 <div>
@@ -73,11 +75,11 @@
   <select class="form-select" aria-label="Default select example" id="p_category" multiple>
 
     
-    {% for p_category in product.category.all%}
-    <option selected>{{p_category.name}}</option>  
-    {% endfor %}
+    {% comment %} {% for p_category in product.category.all%}
+    <option selected>{{p_category.name}}</option>   {% endcomment %}
+    {% comment %} {% endfor %} {% endcomment %}
     {% for cat in category %}
-    <option value={{cat.id}}>{{cat.name}}</option>
+        <option value={{cat.id}} {%if product|selectedcategory:cat %} selected {% endif %}>{{cat.name}}</option>
     {% endfor %}
   </select>
   <div>
@@ -99,6 +101,7 @@
         <button type="button" class="btn btn-primary" id="update_product" onclick="update_data({{product.id}})">Update Product</button>
       </center>
     </div>
+  </form>
   </body>
   <script>
 
@@ -106,8 +109,9 @@
   $("#p_image").on("change", function() {
   var file = this.files[0];
   form_data.append("image",file);
-  console.log(file)
   })
+
+
 
  function update_data(id){
   console.log("save button cicked")
@@ -118,9 +122,11 @@
   let sold_by=$('#sold_by').val();  
   let price=$('#p_price').val();    
   let category=$('#p_category').val();
+  console.log(category)
   let discount_percentage=$('#p_discount_percentage').val();    
   let stock_quantity=$('#stock_quantity').val();  
-  
+
+
   var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
   if (name == "") {
     console.log("please Fill the details")
@@ -136,6 +142,8 @@
       var sold_byId  = parseInt(sold_by[i])
       sold_byArray.push(sold_byId)
     }
+
+
   var my_arr_cat = JSON.stringify(category_array)
   var my_arr_sold_by = JSON.stringify(sold_byArray)
 
@@ -148,7 +156,6 @@
   form_data.append("category_list",my_arr_cat);
   form_data.append("discount_percentage",discount_percentage);
   form_data.append("stock_quantity",stock_quantity);
-  console.log("data show")
 
   $.ajax({
     type: 'POST',

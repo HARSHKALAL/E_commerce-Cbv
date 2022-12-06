@@ -48,11 +48,11 @@ class Product(models.Model):
 class Carousel(models.Model):
     image=models.ImageField(upload_to="carousel/",blank=True,null=True)
 
-    # def __str__(self):
-    #     return self.image
-    
+class Cart(models.Model):
+    user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
+    quantity=models.IntegerField(default=1)
+    product=models.ForeignKey(Product,null=True,on_delete=models.CASCADE)
 
-
-
-
-
+    def __str__(self):
+         return self.product.name
+        

@@ -34,7 +34,6 @@
   -webkit-transform: scale(1.5); 
   transform: scale(1.5); 
 }
-
   </style>
   <body>
     <div class="">
@@ -71,7 +70,7 @@
               <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
             </ul>
           </div>
-       
+     
             </div>
         </div>
         {% else %}  
@@ -121,6 +120,9 @@
   </ul>
 </div>
 <div>
+<a href = "{% url 'view_cart' %}"><button>Go To Cart</button></a>
+</div>
+<div>
 <a href = "{% url 'addproduct' %}"><button>add pro</button></a>
 </div>
 </nav>
@@ -154,8 +156,8 @@
   </div>
   {% for product in category.products.all %}
   <div class="col-md-3 parentdiv" id="zoom">
-    <a href="{% url 'product' product.id %}" ><img
-      src="{{ product.image.url }}"
+    <a href="{% url 'product' product.id %}" >
+      <img src="{{ product.image.url }}"
       alt=" "
       width="225"
       height="150"

@@ -64,12 +64,9 @@
                 {% endif %}
 
                 <div class="action">
-                  <button class="add-to-cart btn btn-default" type="button">
-                    add to cart
+                  <button class="add-to-cart btn btn-default" type="button" id="addcart" onclick=addToCart({{product.id}})>
+                    Add to Cart
                   </button>
-                  <button class="like btn btn-default" type="button">
-                    <span class="fa fa-heart"></span>
-                  </button><br>
                 <a href="{% url 'update_product' product.id %}">Update</a>
                 <a href="{% url 'delete_product' product.id %}">Delete</a>
                 
@@ -81,4 +78,19 @@
       </div>
     </div>
   </body>
-</html>
+
+<script>
+function addToCart(id){
+
+$.ajax({
+    type: 'GET',
+    url: `/cart_product/${id}/`,
+    success:function(cart_product){ 
+      console.log("Id Send Successfully")
+    }
+    }); 
+}
+
+</script>
+
+  </html>
