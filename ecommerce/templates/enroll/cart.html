@@ -14,6 +14,61 @@
     <script></script>
   </head>
   <body>
-    Wel-Come To Cart Product
+    {% for cart in cart_view %}
+    
+    <div class="container">
+      <div>
+        <img src="{{cart.product.image.url}}" style="height: 100px" />
+        <span
+          style="color: red; cursor: pointer"
+          onclick="cartProductRemove({{cart.id}})"
+          >Remove</span>
+      </div>
+      <div class="container" id="bottom">
+        <div>
+          <div>
+            <span >
+              <button onclick="decreaseProduct({{cart.product.id}})">
+                <span>-</span>
+              </button>
+            </span>
+            <span id="numberOfProduct{{cart.product.id}}">{{cart.quantity}}</span>
+            <span>
+              <button onclick="increaseProduct({{cart.product.id}})">
+                <span>+</span>
+              </button>
+            </span>
+          </div>
+    </div>
+    {%endfor %}
   </body>
+  <script>
+    function cartProductRemove(id,d_id) {
+      console.log(id);
+      $.ajax({
+        type: "GET",
+        url: `/remove_cart_Product/${id}`,
+        success: function (remove_category) {
+          console.log("Data Deleted Successfully");
+          //$(`#cat-${id}-${p_id}`).remove();
+          location.reload();
+        },
+      });
+    }
+function increaseProduct(id) {
+  let totalNumber = Number(document.getElementById(`numberOfProduct${id}`).innerText);
+  console.log(totalNumber)
+  document.getElementById(`numberOfProduct${id}`).innerHTML = totalNumber += 1;
+}
+function decreaseProduct(d_id) {
+  let totalNumber = Number(document.getElementById(`numberOfProduct${d_id}`).innerText);
+  if (totalNumber > 1) {
+    document.getElementById(`numberOfProduct${d_id}`).innerHTML = totalNumber -= 1;
+  }
+}
+
+
+
+
+  </script>
 </html>

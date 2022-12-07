@@ -10,10 +10,11 @@ def homepage(request):
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
     carousel_image=Carousel.objects.order_by('image')[0:3]
-
+    cart_count=Cart.objects.filter(user_id=request.user.id).count()
+    
     if category_name:
         categories=categories.filter(name__icontains=category_name)
-    return render(request,"enroll/homepage.html",{'categories':categories,"carousel_image":carousel_image})
+    return render(request,"enroll/homepage.html",{'categories':categories,"carousel_image":carousel_image,"cart_count":cart_count})
 
 def signup(request):
     form=Userform()
@@ -128,8 +129,6 @@ def update_product(request,id):
         pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
         pro=pro.first()
         
-        
-    
         if p_image:
             pro.image=p_image
             pro.save()
@@ -166,11 +165,10 @@ def cart_product(request,id):
     cart=Cart.objects.get_or_create(user_id=request.user.id,product_id=id)
     return HttpResponse("Created Successfully")
 
-
 def view_cart(request):
-    print(request.user)
     cart_view=Cart.objects.filter(user=request.user.id)
-    
-    for i in cart_view:
-        print(i.product.price)    
-    return render(request,"enroll/cart.html")
+    return render(request,"enroll/cart.html",{'cart_view':cart_view})
+
+def remove_cart_Product(request,id):
+    cart_product=Cart.objects.get(id=id).delete()    
+    return HttpResponse("Delete")
