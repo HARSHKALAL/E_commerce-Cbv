@@ -57,7 +57,12 @@
     }
 function increaseProduct(id) {
   let totalNumber = Number(document.getElementById(`numberOfProduct${id}`).innerText);
+  if (totalNumber < 10){
   document.getElementById(`numberOfProduct${id}`).innerHTML = totalNumber += 1;
+  }
+  else{
+    alert("each order maximum 10 quantity buy !!!!!!!!");
+  }
 }
 function decreaseProduct(d_id) {
   let totalNumber = Number(document.getElementById(`numberOfProduct${d_id}`).innerText);
@@ -85,10 +90,10 @@ function update_cart(id){
     if (update_cart_product == "not available"){
       var btnDiv = document.getElementById("editThisDiv")
       btnDiv.remove();
-const node = document.createElement("li");
-const textnode = document.createTextNode("Out of Stock");
-node.appendChild(textnode);
-document.getElementById("bottom").appendChild(node);
+      const node = document.createElement("li");
+      const textnode = document.createTextNode("Out of Stock");
+      node.appendChild(textnode);
+      document.getElementById("bottom").appendChild(node);
     }
     //$(`#cat-${id}-${p_id}`).remove();
   }

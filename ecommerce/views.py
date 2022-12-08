@@ -158,8 +158,7 @@ def remove_sold_by(request,id,p_id):
     product=Product.objects.get(id=p_id)
     product.sold_by.remove(id)    
     return HttpResponse("Deleted")
-
-
+    
 def cart_product(request,id):
     print(id)
     print(request.user.id)
@@ -178,7 +177,7 @@ def update_cart_Product(request,id):
     if request.method == 'POST':
         cart_quantity=request.POST['quantityProduct']
         cart_quantity_updated = json.loads(cart_quantity)
-        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)	
+        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)
         
         print(cart_product.product.stock_quantity)
         if cart_quantity_updated <= cart_product.product.stock_quantity:            
