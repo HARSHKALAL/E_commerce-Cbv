@@ -25,16 +25,16 @@
           >Remove</span>
       </div>
       <div class="container" id="bottom">
-        <div>
+        <div id="editThisDiv">
           <div>
             <span >
-              <button onclick="decreaseProduct({{cart.product.id}})">
+              <button onclick="decreaseProduct({{cart.product.id}}),update_cart({{cart.product.id}})">
                 <span>-</span>
               </button>
             </span>
             <span id="numberOfProduct{{cart.product.id}}">{{cart.quantity}}</span>
             <span>
-              <button onclick="increaseProduct({{cart.product.id}})">
+              <button onclick="increaseProduct({{cart.product.id}}),update_cart({{cart.product.id}})">
                 <span>+</span>
               </button>
             </span>
@@ -43,7 +43,7 @@
     {%endfor %}
   </body>
   <script>
-    function cartProductRemove(id,d_id) {
+    function cartProductRemove(id) {
       console.log(id);
       $.ajax({
         type: "GET",
@@ -57,7 +57,6 @@
     }
 function increaseProduct(id) {
   let totalNumber = Number(document.getElementById(`numberOfProduct${id}`).innerText);
-  console.log(totalNumber)
   document.getElementById(`numberOfProduct${id}`).innerHTML = totalNumber += 1;
 }
 function decreaseProduct(d_id) {
@@ -67,8 +66,33 @@ function decreaseProduct(d_id) {
   }
 }
 
+function update_cart(id){
+  console.log(id)
+  let quantityProduct = Number(document.getElementById(`numberOfProduct${id}`).innerText);
+  var token = '{{csrf_token }}'
 
-
-
+  let data={'quantityProduct':quantityProduct}
+  console.log(data)
+  
+  $.ajax({
+    type: 'POST',
+    url: `/update_cart_Product/${id}/`,
+    headers: { "X-CSRFToken": token },
+    data:data,
+    success:function(update_cart_product){ 
+    console.log("Data submitted Successfully")
+    console.log("???",update_cart_product)
+    if (update_cart_product == "not available"){
+      var btnDiv = document.getElementById("editThisDiv")
+      btnDiv.remove();
+const node = document.createElement("li");
+const textnode = document.createTextNode("Out of Stock");
+node.appendChild(textnode);
+document.getElementById("bottom").appendChild(node);
+    }
+    //$(`#cat-${id}-${p_id}`).remove();
+  }
+    });
+}
   </script>
 </html>

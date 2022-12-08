@@ -5,12 +5,13 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import User,Category,Product,MerchantFirm,Carousel,Cart
 import json
+from django.db.models import Sum
 
 def homepage(request):  
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
     carousel_image=Carousel.objects.order_by('image')[0:3]
-    cart_count=Cart.objects.filter(user_id=request.user.id).count()
+    cart_count=Cart.objects.filter(user_id=request.user.id).aggregate(Sum('quantity'))
     
     if category_name:
         categories=categories.filter(name__icontains=category_name)
@@ -172,3 +173,18 @@ def view_cart(request):
 def remove_cart_Product(request,id):
     cart_product=Cart.objects.get(id=id).delete()    
     return HttpResponse("Delete")
+
+def update_cart_Product(request,id):
+    if request.method == 'POST':
+        cart_quantity=request.POST['quantityProduct']
+        cart_quantity_updated = json.loads(cart_quantity)
+        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)	
+        
+        print(cart_product.product.stock_quantity)
+        if cart_quantity_updated <= cart_product.product.stock_quantity:            
+            cart_product.quantity=cart_quantity_updated
+            cart_product.save()
+            print("updated")
+        else:
+            return HttpResponse("not available")
+    return HttpResponse("Update")
