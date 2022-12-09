@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from .models import User,Category,Product,MerchantFirm,Carousel,Cart
 import json
 from django.db.models import Sum
@@ -158,7 +158,8 @@ def remove_sold_by(request,id,p_id):
     product=Product.objects.get(id=p_id)
     product.sold_by.remove(id)    
     return HttpResponse("Deleted")
-    
+
+
 def cart_product(request,id):
     print(id)
     print(request.user.id)
@@ -175,15 +176,30 @@ def remove_cart_Product(request,id):
 
 def update_cart_Product(request,id):
     if request.method == 'POST':
-        cart_quantity=request.POST['quantityProduct']
-        cart_quantity_updated = json.loads(cart_quantity)
-        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)
+        add=request.POST['add']
+        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)                      
         
-        print(cart_product.product.stock_quantity)
-        if cart_quantity_updated <= cart_product.product.stock_quantity:            
-            cart_product.quantity=cart_quantity_updated
-            cart_product.save()
-            print("updated")
-        else:
+        if  cart_product.product.stock_quantity <= cart_product.quantity :                        
             return HttpResponse("not available")
-    return HttpResponse("Update")
+        else :
+            if add == 'add':
+                cart_product.quantity = cart_product.quantity + 1    
+                cart_product.save()
+                return JsonResponse({"msg":"added in cart","qty":cart_product.quantity})
+
+            else:
+                if cart_product.quantity == 1:
+                    cart_product.delete()
+                    return JsonResponse({"msg":"not in stock"})
+                else:
+                    cart_product.quantity = cart_product.quantity - 1    
+                    cart_product.save()
+                    print("Delete one item")
+                    return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity})
+                    # return HttpResponse({"qty":cart_product.quantity})
+
+
+# def product_price(request,id):
+#     product_price=Cart.objects.get(product_id=id,user_id = request.user.id)                      
+#     total_price=product_price.product.price*product_price.quantity
+#     return JsonResponse({"total_price":total_price})
