@@ -38,6 +38,7 @@ TEMPLATES = [
             'libraries':{
             'filtertags': 'ecommerce.templatetags.filtertags',
             'is_selected':'ecommerce.templatetags.is_selected',
+            'product_price':'ecommerce.templatetags.product_price',
             
             }
         },

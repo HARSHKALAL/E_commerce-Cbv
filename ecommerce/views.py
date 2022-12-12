@@ -177,15 +177,23 @@ def remove_cart_Product(request,id):
 def update_cart_Product(request,id):
     if request.method == 'POST':
         add=request.POST['add']
-        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)                      
         
+
+        cart_price = Cart.objects.filter(user_id=request.user.id).annotate()
+        # sum=0
+        # for i in cart_price:
+        #     sum += i.product.price * i.quantity
+        # print(sum)
+        
+        
+        cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)                      
         if  cart_product.product.stock_quantity <= cart_product.quantity :                        
             return HttpResponse("not available")
         else :
             if add == 'add':
                 cart_product.quantity = cart_product.quantity + 1    
                 cart_product.save()
-                return JsonResponse({"msg":"added in cart","qty":cart_product.quantity})
+                return JsonResponse({"msg":"added in cart","qty":cart_product.quantity,"price":cart_product.product.price})
 
             else:
                 if cart_product.quantity == 1:
@@ -194,12 +202,10 @@ def update_cart_Product(request,id):
                 else:
                     cart_product.quantity = cart_product.quantity - 1    
                     cart_product.save()
-                    print("Delete one item")
-                    return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity})
+                    return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity,"price":cart_product.product.price})
                     # return HttpResponse({"qty":cart_product.quantity})
 
-
-# def product_price(request,id):
+# def product_price(request,id):    
 #     product_price=Cart.objects.get(product_id=id,user_id = request.user.id)                      
 #     total_price=product_price.product.price*product_price.quantity
 #     return JsonResponse({"total_price":total_price})

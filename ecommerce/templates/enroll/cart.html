@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load product_price%}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -19,55 +20,37 @@
     <div class="container" id="remove{{cart.product.id}}">
       <div id="remove{{cart.product.id}}">
         <img src="{{cart.product.image.url}}" style="height: 100px" />
+        <span>Price : {{cart.product.price}}</span>
         <span
           style="color: red; cursor: pointer"
           onclick="cartProductRemove({{cart.id}})"
           >Remove</span>
-          <span id="product_price{{cart.product.id}}">{{cart.product.price}}</span>
+          <span id="product_price{{cart.product.id}}">{{cart|product_price}}</span>
       </div>
       <div class="container" id="bottom">
         <div id="editThisDiv">
           <div>
             <span >
-              <button onclick="update_cart({{cart.product.id}},'remove'),product_price({{cart.product.id}})">
+              <button onclick="update_cart({{cart.product.id}},'remove')">
                 <span>-</span>
               </button>
             </span>
             <span id="numberOfProduct{{cart.product.id}}">{{cart.quantity}}</span>
             <span>
-              <button onclick="update_cart({{cart.product.id}},'add'),product_price({{cart.product.id}})">
+              <button onclick="update_cart({{cart.product.id}},'add')">
                 <span>+</span>
               </button>
             </span>
           </div>
     </div>
     {%endfor %}
+    <br>
+      <button>Process To CheckOut</button>
+      <span id="totalprice"></span>
   </body>
+
   <script>
-
-
-function product_price(id){
-
-  
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     function cartProductRemove(id) {
-      console.log(id);
       $.ajax({
   
         type: "GET",
@@ -96,18 +79,25 @@ function decreaseProduct(d_id) {
 }
 
 function update_cart(id,add){
-  console.log(add)
   let quantityProduct = Number(document.getElementById(`numberOfProduct${id}`).innerText);
   var token = '{{csrf_token }}'
-
   let data={'quantityProduct':quantityProduct,'add':add}
-  
+
   $.ajax({
     type: 'POST',
     url: `/update_cart_Product/${id}/`,
     headers: { "X-CSRFToken": token },
     data:data,
     success:function(not_available){ 
+
+
+      var qtyy = parseInt(not_available.qty)
+      var price = parseInt(not_available.price)
+      var final_price = qtyy * price
+     $(`#product_price${id}`).html(final_price)
+
+     
+
     $(`#numberOfProduct${id}`).html(not_available.qty);
     if (not_available !='not available'){
       increaseProduct(id)
