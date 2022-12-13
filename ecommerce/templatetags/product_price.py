@@ -4,8 +4,10 @@ register = template.Library()
 
 @register.filter
 def product_price(cart): 
-    total =cart.product.price * cart.quantity   
+    total = cart.product.price * cart.quantity
     return total
+
+
 
 
 

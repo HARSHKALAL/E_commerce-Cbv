@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from .models import User,Category,Product,MerchantFirm,Carousel,Cart
 import json
-from django.db.models import Sum
+from django.db.models import Sum,F,DecimalField,ExpressionWrapper,Value
 
 def homepage(request):  
     category_name = request.GET.get('cat')    
@@ -168,7 +168,12 @@ def cart_product(request,id):
 
 def view_cart(request):
     cart_view=Cart.objects.filter(user=request.user.id)
-    return render(request,"enroll/cart.html",{'cart_view':cart_view})
+
+    cart_total_final = Cart.objects.filter(user_id=request.user.id).annotate(sum_total = ExpressionWrapper(F('product__price') * F('quantity'), output_field=DecimalField()))
+    final_show = cart_total_final.values("sum_total").annotate(totals=Sum("sum_total"))
+    new_try = final_show.aggregate(total=Sum('totals'))
+      
+    return render(request,"enroll/cart.html",{'cart_view':cart_view,"total":new_try.get('total')})
 
 def remove_cart_Product(request,id):
     cart_product=Cart.objects.get(id=id).delete()    
@@ -177,35 +182,30 @@ def remove_cart_Product(request,id):
 def update_cart_Product(request,id):
     if request.method == 'POST':
         add=request.POST['add']
-        
 
-        cart_price = Cart.objects.filter(user_id=request.user.id).annotate()
-        # sum=0
-        # for i in cart_price:
-        #     sum += i.product.price * i.quantity
-        # print(sum)
+        cart_total_final = Cart.objects.filter(user_id=request.user.id).annotate(sum_total = ExpressionWrapper(F('product__price') * F('quantity'), output_field=DecimalField()))
+        final_show = cart_total_final.values("sum_total").annotate(totals=Sum("sum_total"))
+        new_try = final_show.aggregate(total=Sum('totals'))
         
         
         cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)                      
         if  cart_product.product.stock_quantity <= cart_product.quantity :                        
             return HttpResponse("not available")
-        else :
+        else:
             if add == 'add':
                 cart_product.quantity = cart_product.quantity + 1    
                 cart_product.save()
-                return JsonResponse({"msg":"added in cart","qty":cart_product.quantity,"price":cart_product.product.price})
-
+                return JsonResponse({"msg":"added in cart","qty":cart_product.quantity,"price":cart_product.product.price,"total":new_try.get('total')})
             else:
                 if cart_product.quantity == 1:
                     cart_product.delete()
-                    return JsonResponse({"msg":"not in stock"})
+                    return JsonResponse({"msg":"not in stock","price":cart_product.product.price,"total":new_try.get('total')})
                 else:
                     cart_product.quantity = cart_product.quantity - 1    
                     cart_product.save()
-                    return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity,"price":cart_product.product.price})
-                    # return HttpResponse({"qty":cart_product.quantity})
+                    return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity,"price":cart_product.product.price,"total":new_try.get('total')})
 
-# def product_price(request,id):    
-#     product_price=Cart.objects.get(product_id=id,user_id = request.user.id)                      
-#     total_price=product_price.product.price*product_price.quantity
-#     return JsonResponse({"total_price":total_price})
+def confirm_order(request):
+    order_confirm=Cart.objects.filter(user_id=request.user.id)
+    print(order_confirm)
+    return render(request,"enroll/confirm_order.html",{'order_confirm':order_confirm})

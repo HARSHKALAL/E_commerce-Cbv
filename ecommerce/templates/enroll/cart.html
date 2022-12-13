@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-{% load static %}
-{% load product_price%}
+{% load static %} {% load product_price%}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,43 +15,44 @@
   </head>
   <body>
     {% for cart in cart_view %}
-    
-    <div class="container" id="remove{{cart.product.id}}">
+
+    <div class="container">
       <div id="remove{{cart.product.id}}">
         <img src="{{cart.product.image.url}}" style="height: 100px" />
         <span>Price : {{cart.product.price}}</span>
         <span
           style="color: red; cursor: pointer"
           onclick="cartProductRemove({{cart.id}})"
-          >Remove</span>
-          <span id="product_price{{cart.product.id}}">{{cart|product_price}}</span>
+          >Remove</span
+        >
+        <span id="product_price{{cart.product.id}}"
+          >{{cart|product_price}}</span
+        >
+        <br />
+
+        <span>
+          <button onclick="update_cart({{cart.product.id}},'remove')">
+            <span>-</span>
+          </button>
+        </span>
+        <span id="numberOfProduct{{cart.product.id}}">{{cart.quantity}}</span>
+        <span>
+          <button onclick="update_cart({{cart.product.id}},'add')">
+            <span>+</span>
+          </button>
+        </span>
       </div>
-      <div class="container" id="bottom">
-        <div id="editThisDiv">
-          <div>
-            <span >
-              <button onclick="update_cart({{cart.product.id}},'remove')">
-                <span>-</span>
-              </button>
-            </span>
-            <span id="numberOfProduct{{cart.product.id}}">{{cart.quantity}}</span>
-            <span>
-              <button onclick="update_cart({{cart.product.id}},'add')">
-                <span>+</span>
-              </button>
-            </span>
-          </div>
     </div>
     {%endfor %}
-    <br>
-      <button>Process To CheckOut</button>
-      <span id="totalprice"></span>
+    <br />
+    <a href="{% url 'confirm_order' %}"><button>Process To CheckOut</button></a>
+
+    <p id="checkoutTotal">{{total}}</p>
   </body>
 
   <script>
     function cartProductRemove(id) {
       $.ajax({
-  
         type: "GET",
         url: `/remove_cart_Product/${id}`,
         success: function (remove_category) {
@@ -62,56 +62,78 @@
         },
       });
     }
-function increaseProduct(id) {
-  let totalNumber = Number(document.getElementById(`numberOfProduct${id}`).innerText);
-  if (totalNumber < 10){
-  document.getElementById(`numberOfProduct${id}`).innerHTML = totalNumber += 1;
-  }
-  else{
-    alert("each order maximum 10 quantity buy !!!!!!!!");
-  }
-}
-function decreaseProduct(d_id) {
-  let totalNumber = Number(document.getElementById(`numberOfProduct${d_id}`).innerText);
-  if (totalNumber > 1) {
-    document.getElementById(`numberOfProduct${d_id}`).innerHTML = totalNumber -= 1;
-  }
-}
 
-function update_cart(id,add){
-  let quantityProduct = Number(document.getElementById(`numberOfProduct${id}`).innerText);
-  var token = '{{csrf_token }}'
-  let data={'quantityProduct':quantityProduct,'add':add}
-
-  $.ajax({
-    type: 'POST',
-    url: `/update_cart_Product/${id}/`,
-    headers: { "X-CSRFToken": token },
-    data:data,
-    success:function(not_available){ 
-
-
-      var qtyy = parseInt(not_available.qty)
-      var price = parseInt(not_available.price)
-      var final_price = qtyy * price
-     $(`#product_price${id}`).html(final_price)
-
-     
-
-    $(`#numberOfProduct${id}`).html(not_available.qty);
-    if (not_available !='not available'){
-      increaseProduct(id)
-      decreaseProduct(id)
+    function increaseProduct(id) {
+      let totalNumber = Number(
+        document.getElementById(`numberOfProduct${id}`).innerText
+      );
+      if (totalNumber < 10) {
+        document.getElementById(`numberOfProduct${id}`).innerHTML =
+          totalNumber += 1;
+      } else {
+        alert("each order maximum 10 quantity buy !!!!!!!!");
+      }
     }
-    else{
-      alert(not_available)
+    function decreaseProduct(d_id) {
+      let totalNumber = Number(
+        document.getElementById(`numberOfProduct${d_id}`).innerText
+      );
+      if (totalNumber > 1) {
+        document.getElementById(`numberOfProduct${d_id}`).innerHTML =
+          totalNumber -= 1;
+      }
     }
-    if (not_available.msg == "not in stock"){
-      var remove=document.getElementById(`remove${id}`) ;
-      remove.remove(); 
-    }     
-  }
-    });
-}
+
+    function update_cart(id, add) {
+      let quantityProduct = Number(
+        document.getElementById(`numberOfProduct${id}`).innerText
+      );
+      var token = "{{csrf_token }}";
+      let data = { quantityProduct: quantityProduct, add: add };
+
+      $.ajax({
+        type: "POST",
+        url: `/update_cart_Product/${id}/`,
+        headers: { "X-CSRFToken": token },
+        data: data,
+        success: function (not_available) {
+          var qtyy = parseInt(not_available.qty);
+          var price = parseInt(not_available.price);
+          var final_price = qtyy * price;
+          $(`#product_price${id}`).html(final_price);
+          var totalData = parseInt(not_available.total);
+
+          if (add == "add") {
+            var final_total = totalData + price;
+          } else {
+            var final_total = totalData - price;
+          }
+          $("#checkoutTotal").html(final_total);
+          $(`#numberOfProduct${id}`).html(not_available.qty);
+          if (not_available != "not available") {
+            increaseProduct(id);
+            decreaseProduct(id);
+          } else {
+            alert(not_available);
+          }
+          if (not_available.msg == "not in stock") {
+            console.log("????");
+            var remove_item = document.getElementById(`remove${id}`);
+            remove_item.remove();
+            var qtyy = parseInt(not_available.qty);
+            var price = parseInt(not_available.price);
+            var final_price = qtyy * price;
+            $(`#product_price${id}`).html(final_price);
+            $(`#numberOfProduct${id}`).html(not_available.qty);
+            var prc = totalData - price;
+            console.log("epty", price);
+            console.log("epty", totalData);
+
+            console.log("epty", parseInt(prc));
+            $("#checkoutTotal").html(prc);
+          }
+        },
+      });
+    }
   </script>
 </html>
