@@ -45,12 +45,27 @@
     </div>
     {%endfor %}
     <br />
-    <a href="{% url 'confirm_order' %}"><button>Process To CheckOut</button></a>
+    <button onclick="ProcessCheckout()">Process To CheckOut</button>
 
     <p id="checkoutTotal">{{total}}</p>
   </body>
 
   <script>
+    function ProcessCheckout() {
+      var totalAmount = document.getElementById("checkoutTotal").innerText;
+      var token = "{{csrf_token }}";
+      let data = { totalamount: totalAmount };
+      $.ajax({
+        type: "POST",
+        headers: { "X-CSRFToken": token },
+        url: "/confirm_order/",
+        data: data,
+        success: function (processToCheckout) {
+          console.log("recevied something");
+        },
+      });
+    }
+
     function cartProductRemove(id) {
       $.ajax({
         type: "GET",

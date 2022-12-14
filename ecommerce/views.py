@@ -3,7 +3,7 @@ from .forms import Userform,EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
-from .models import User,Category,Product,MerchantFirm,Carousel,Cart
+from .models import User,Category,Product,MerchantFirm,Carousel,Cart,Order
 import json
 from django.db.models import Sum,F,DecimalField,ExpressionWrapper,Value
 
@@ -185,8 +185,7 @@ def update_cart_Product(request,id):
 
         cart_total_final = Cart.objects.filter(user_id=request.user.id).annotate(sum_total = ExpressionWrapper(F('product__price') * F('quantity'), output_field=DecimalField()))
         final_show = cart_total_final.values("sum_total").annotate(totals=Sum("sum_total"))
-        new_try = final_show.aggregate(total=Sum('totals'))
-        
+        new_try = final_show.aggregate(total=Sum('totals'))        
         
         cart_product=Cart.objects.get(product_id=id,user_id = request.user.id)                      
         if  cart_product.product.stock_quantity <= cart_product.quantity :                        
@@ -206,6 +205,21 @@ def update_cart_Product(request,id):
                     return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity,"price":cart_product.product.price,"total":new_try.get('total')})
 
 def confirm_order(request):
+    total=request.POST['totalamount']
+    total_updated = json.loads(total)
+    print(total_updated)    
     order_confirm=Cart.objects.filter(user_id=request.user.id)
-    print(order_confirm)
-    return render(request,"enroll/confirm_order.html",{'order_confirm':order_confirm})
+    print(order_confirm)    
+    
+    orders=[]
+    for order in order_confirm:
+        data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
+        orders.append(data)
+
+    print(orders)
+    order_confirm=Order.objects.create(user_id=request.user.id,total_amount=total_updated,order_details=orders)
+    print("Database Save")
+    return render(request,"enroll/confirm_order.html")
+
+
+

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import uuid
 
 class User(AbstractUser):
     ROLE = (
@@ -56,9 +57,9 @@ class Cart(models.Model):
     def __str__(self):
          return self.product.name
 
-# class Order(models.Model):
-#     user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
-#     order_id=models.UUIDField() 
-#     total_amount=models.IntegerField()
-#     order_details =  models.JSONField(default={})
+class Order(models.Model):
+    user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
+    order_id=models.UUIDField(default = uuid.uuid4,editable=False) 
+    total_amount=models.IntegerField()
+    order_details =  models.JSONField(default=dict)
 
