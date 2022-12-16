@@ -63,3 +63,6 @@ class Order(models.Model):
     total_amount=models.IntegerField()
     order_details =  models.JSONField(default=dict)
 
+    def __str__(self):
+        return self.order_details
+
