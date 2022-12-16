@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E commerce</title>
+    <link rel="stylesheet" href="{% static 'enroll/css/bootstrap.css' %}" />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="{% static 'enroll/jss/jquery.js' %}"></script>
+    <script src="{% static 'enroll/jss/popper.js' %}"></script>
+    <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
+  </head>
+
+  <body>
+    {% for j in product_details%}
+
+    <div class="container">
+      <img src="{{j.products.image.url}}" style="height: 100px" /><br />
+      {{j.qty}} <br />
+      {{j.price}}
+    </div>
+    {% endfor %} {% for i in my_order %} {{i.order_id}} {{i.total_amount}}
+    {{i.order_date}}<br />
+    {%endfor %}
+  </body>
+</html>

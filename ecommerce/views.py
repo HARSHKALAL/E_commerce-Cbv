@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from .models import User,Category,Product,MerchantFirm,Carousel,Cart,Order
 import json
 from django.db.models import Sum,F,DecimalField,ExpressionWrapper,Value
-
+from .utils import *
+from django.core.serializers.json import DjangoJSONEncoder
 def homepage(request):  
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
@@ -207,19 +208,35 @@ def update_cart_Product(request,id):
 def confirm_order(request):
     total=request.POST['totalamount']
     total_updated = json.loads(total)
-    print(total_updated)    
     order_confirm=Cart.objects.filter(user_id=request.user.id)
-    print(order_confirm)    
-    
-    orders=[]
-    for order in order_confirm:
-        data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
-        orders.append(data)
+    print(order_confirm)
 
-    print(orders)
-    order_confirm=Order.objects.create(user_id=request.user.id,total_amount=total_updated,order_details=orders)
+    data=order_confirm.values('product_id','product__price','quantity')
+    data_json = json.dumps(list(data), cls=DjangoJSONEncoder)
+    
+    print(data_json) 
+
+    available=order_confirm.values('product__stock_quantity')
+    print(available)
+
+    
+    
+    # orders=[]
+    # for order in order_confirm:
+    #     data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
+    #     orders.append({"data":data,"stock_quntity":order.product.stock_quantity})
+    
+
+    # print((orders[0]).get('data'))
+    # order_confirm=Order.objects.create(user_id=request.user.id,total_amount=total_updated,order_details=data_json)
+
     print("Database Save")
     return render(request,"enroll/confirm_order.html")
+
+def my_orders(request):
+    my_order=Order.objects.filter(user_id=request.user.id)
+    order_data=list(my_order.values('order_details'))
+    return render(request,"enroll/my_orders.html",{'my_order':my_order,"product_details":order_json_to_products(order_data)})
 
 
 
