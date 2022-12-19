@@ -16,15 +16,21 @@
   </head>
 
   <body>
-    {% for j in product_details%}
+    <br />
+    <div class="container border" style="">
+      <br />
+      {% for j in product_details%}
 
-    <div class="container">
-      <img src="{{j.products.image.url}}" style="height: 100px" /><br />
-      {{j.qty}} <br />
-      {{j.price}}
+      <div class="row">
+        <div class="col-md-3" style="padding: 20px; margin: 10px">
+          <img
+            src="{{j.products.image.url}}"
+            style="height: 100px; width: 150px"
+          />
+        </div>
+        <div class="col-md-3">{{j.qty}}</div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %} {% for i in my_order %} {{i.order_id}} {{i.total_amount}}
-    {{i.order_date}}<br />
-    {%endfor %}
   </body>
 </html>

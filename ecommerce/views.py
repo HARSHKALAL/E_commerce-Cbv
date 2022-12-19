@@ -128,6 +128,7 @@ def update_product(request,id):
         print(cat_updated)
 
         pro=Product.objects.filter(id=id)
+        
         pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
         pro=pro.first()
         
@@ -209,28 +210,16 @@ def confirm_order(request):
     total=request.POST['totalamount']
     total_updated = json.loads(total)
     order_confirm=Cart.objects.filter(user_id=request.user.id)
-    print(order_confirm)
+    order_data=order_confirm.values('product_id','product__price','product__stock_quantity','quantity')
+    data_json = list(order_data)
 
-    data=order_confirm.values('product_id','product__price','quantity')
-    data_json = json.dumps(list(data), cls=DjangoJSONEncoder)
+    orders=[]
+    for order in order_confirm:
+        data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
+        orders.append({"data":data,"stock_quntity":order.product.stock_quantity})
     
-    print(data_json) 
-
-    available=order_confirm.values('product__stock_quantity')
-    print(available)
-
-    
-    
-    # orders=[]
-    # for order in order_confirm:
-    #     data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
-    #     orders.append({"data":data,"stock_quntity":order.product.stock_quantity})
-    
-
-    # print((orders[0]).get('data'))
-    # order_confirm=Order.objects.create(user_id=request.user.id,total_amount=total_updated,order_details=data_json)
-
-    print("Database Save")
+    order_confirm=Order.objects.create(user_id=request.user.id,total_amount=total_updated,order_details=data_json)
+    total_stock_quantity(order_data)
     return render(request,"enroll/confirm_order.html")
 
 def my_orders(request):
