@@ -20,7 +20,6 @@
     <div class="container border" style="">
       <br />
       {% for j in product_details%}
-
       <div class="row">
         <div class="col-md-3" style="padding: 20px; margin: 10px">
           <img
@@ -28,9 +27,88 @@
             style="height: 100px; width: 150px"
           />
         </div>
-        <div class="col-md-3">{{j.qty}}</div>
+        <div class="col-md-3">
+          {{j.products.name}}<br />
+          <p style="font-weight: 200; color: offwhite">
+            {{j.products.description}}
+          </p>
+        </div>
+        <div class="col-md-2">₹{{j.products.price}}</div>
+        <div class="col-md-2">Quantity:{{j.qty}}</div>
+        <div class="col-md-2"></div>
       </div>
       {% endfor %}
+      <div class="row text-end">
+        {% for myorder in my_order %}
+        <div class="col-md-9">
+          Total:
+          <button type="button" class="btn btn-success">
+            ₹{{myorder.total_amount}}
+          </button>
+          <p
+            style="font-size: 13px; cursor: pointer; color: red"
+            onclick="openModal(event);"
+          >
+            View Breakup
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="exampleModalCenter"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalCenterTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">
+              Price Breakup
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+              onclick="closeModal(event)"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {% for i in product_details %}
+            <div class="row">
+              <div class="col-md-6">{{i.products.name}}</div>
+              <div class="col-md-3">{{i.qty}}*{{i.products.price}}</div>
+            </div>
+            {%endfor %}
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              onclick="closeModal(event)"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
+  <script>
+    function openModal(e) {
+      e.preventDefault();
+      var myModal = $("#exampleModalCenter").modal("show");
+    }
+    function closeModal(e) {
+      e.preventDefault();
+      var myModal = $("#exampleModalCenter").modal("hide");
+    }
+  </script>
 </html>

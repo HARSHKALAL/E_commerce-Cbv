@@ -1,5 +1,6 @@
 from .models import Product
 from django.core.serializers.json import DjangoJSONEncoder
+from decimal import Decimal
 import json
 
 
@@ -8,7 +9,6 @@ def order_json_to_products(order_data):
     for i in range(len(order_data)):
         order_detail_data = order_data[i]['order_details']
         for product in order_detail_data:
-            print(product)
             products = Product.objects.get(id=product['product_id'])
             print(products)
             product_quantity = product['quantity']
@@ -29,5 +29,9 @@ def total_stock_quantity(order_quantity):
 
 
 
-
+class DecimalEncoder(json.JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, Decimal):
+      return str(obj)
+    return json.JSONEncoder.default(self, obj)
 

@@ -8,6 +8,9 @@ import json
 from django.db.models import Sum,F,DecimalField,ExpressionWrapper,Value
 from .utils import *
 from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict
+
+
 def homepage(request):  
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
@@ -202,6 +205,7 @@ def update_cart_Product(request,id):
                     cart_product.delete()
                     return JsonResponse({"msg":"not in stock","price":cart_product.product.price,"total":new_try.get('total')})
                 else:
+ 
                     cart_product.quantity = cart_product.quantity - 1    
                     cart_product.save()
                     return JsonResponse({"msg":"removed from cart","qty":cart_product.quantity,"price":cart_product.product.price,"total":new_try.get('total')})
@@ -209,12 +213,14 @@ def update_cart_Product(request,id):
 def confirm_order(request):
     total=request.POST['totalamount']
     total_updated = json.loads(total)
-    order_confirm=Cart.objects.filter(user_id=request.user.id)
-    order_data=order_confirm.values('product_id','product__price','product__stock_quantity','quantity')
-    data_json = list(order_data)
+        
+    order_confirmation=Cart.objects.filter(user_id=request.user.id)
+    order_data=order_confirmation.values('product_id','product__price','product__stock_quantity','quantity')
+
+    data_json = json.loads(json.dumps(list(order_data, cls=DecimalEncoder)))
 
     orders=[]
-    for order in order_confirm:
+    for order in  order_confirmation:
         data={"product_id":order.product.id,"price":str(order.product.price),"quantity":order.quantity}
         orders.append({"data":data,"stock_quntity":order.product.stock_quantity})
     
