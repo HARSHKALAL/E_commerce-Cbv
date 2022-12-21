@@ -69,3 +69,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 AUTH_USER_MODEL = 'ecommerce.User'
+
+
+STRIPE_SECRET_KEY='sk_test_51MHLavSHaSaa8XAPYywgCwZgqQfPKT9LCte7pvqYEaAe8vyUS62l52RoXtm95pwBtnFz7R5ncvyTTkTM4ahj1AdG00HaoCMClI'
+
+STRIPE_PUBLISH_KEY='pk_test_51MHLavSHaSaa8XAPZpjWLVj6v3JtHCUCslsQ8rDmOcEv437SrMZ0jmKcm8QgeiqcwcnkQSWLnTtETdVj3m2caWGD00xn0vB6Bi'

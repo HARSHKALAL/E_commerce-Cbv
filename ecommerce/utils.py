@@ -3,7 +3,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from decimal import Decimal
 import json
 
-
 def order_json_to_products(order_data):
     list_data = []
     for i in range(len(order_data)):
@@ -26,8 +25,6 @@ def total_stock_quantity(order_quantity):
             pro.stock_quantity=total_stock_quantity-quantity
             print(pro.stock_quantity)
             pro.save()    
-
-
 
 class DecimalEncoder(json.JSONEncoder):
   def default(self, obj):

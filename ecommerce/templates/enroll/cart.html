@@ -11,7 +11,7 @@
     <script src="{% static 'enroll/jss/jquery.js' %}"></script>
     <script src="{% static 'enroll/jss/popper.js' %}"></script>
     <script src="{% static 'enroll/jss/bootstrap.js' %}"></script>
-    <script></script>
+    <script src="https://js.stripe.com/v3/"></script>
   </head>
   <body>
     {% for cart in cart_view %}
@@ -51,6 +51,33 @@
   </body>
 
   <script>
+    {% comment %} function callCheckout(id) {
+      var stripe = Stripe(
+        "pk_test_51MHLavSHaSaa8XAPZpjWLVj6v3JtHCUCslsQ8rDmOcEv437SrMZ0jmKcm8QgeiqcwcnkQSWLnTtETdVj3m2caWGD00xn0vB6Bi"
+      );
+      var checkoutButton = document.getElementById("checkout-button");
+      // Create a new Checkout Session using the server-side endpoint you
+      fetch(`/create-checkout-session/?id=${id}`, {
+        method: "POST",
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (session) {
+          return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function (result) {
+          // If `redirectToCheckout` fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using `error.message`.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    } {% endcomment %}
     function ProcessCheckout() {
       var totalAmount = document.getElementById("checkoutTotal").innerText;
       var token = "{{csrf_token }}";
@@ -60,8 +87,10 @@
         headers: { "X-CSRFToken": token },
         url: "/confirm_order/",
         data: data,
-        success: function (processToCheckout) {
-          console.log("recevied something");
+        success: function (data) {
+          console.log(data.id, "res");
+          let id = data.id;
+          //callCheckout(id);
         },
       });
     }
@@ -143,7 +172,6 @@
             var prc = totalData - price;
             console.log("epty", price);
             console.log("epty", totalData);
-
             console.log("epty", parseInt(prc));
             $("#checkoutTotal").html(prc);
           }
