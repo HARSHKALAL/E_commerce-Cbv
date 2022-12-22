@@ -48,7 +48,7 @@
   <option selected>Sold By</option>
  
   {% for product in solds_by %}
-    <option>{{product.firm_name}}</option>
+    <option value="{{product.id}}">{{product.firm_name}}</option>
     {% endfor %}
 </select>
       </div>
@@ -65,7 +65,7 @@
   <select class="form-select" aria-label="Default select example" id="p_category">
     <option selected>Category</option>
     {% for product in category %}
-    <option>{{product.name}}</option>
+    <option value={{product.id}}>{{product.name}}</option>
     {% endfor %}
   </select>
 </div>
@@ -100,7 +100,8 @@
   let sold_by=$('#sold_by').val();    
   let price=$('#p_price').val();    
   let discount_percentage=$('#p_discount_percentage').val();    
-  let category=$('#p_category').val();    
+  let category=$('#p_category').val();   
+  console.log(category,'??')
   let stock_quantity=$('#stock_quantity').val();  
     
   var csrf_token = $('input[name="csrfmiddlewaretoken"]').val();

@@ -9,7 +9,6 @@ def selectedcategory(product,category):
 
 @register.filter
 def selectedsold_by(product,sold_by):
-    
     return sold_by in product.sold_by.all() 
 
 

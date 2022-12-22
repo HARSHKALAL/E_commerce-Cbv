@@ -24,21 +24,21 @@
       <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <input type="text" class="form-control" placeholder="Enter Product name" id="p_name" value={{product.name}} />
+          <input type="text" class="form-control" placeholder="Enter Product name" id="p_name" value={{product_data.name}} />
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control" placeholder="Enter Text" id="p_text" value={{product.text}}/>
+          <input type="text" class="form-control" placeholder="Enter Text" id="p_text" value={{product_data.text}}/>
         </div>
       </div>
 <br>
     <div class="row">
         <div class="col-md-6">
-        <input type="text" class="form-control" placeholder="Enter Description" id="p_description"/ value={{product.description}}>
+        <input type="text" class="form-control" placeholder="Enter Description" id="p_description"/ value={{product_data.description}}>
       </div>
       
       <div class="col-md-6">
         <form id="add-prop">
-        <input  type="file"  class="form-control" placeholder="Choose File" id="p_image"/ value={{product.image}}>
+        <input  type="file"  class="form-control" placeholder="Choose File" id="p_image"/ value={{product_data.image}}>
         </form>
       </div>
     </div>
@@ -47,44 +47,44 @@
         <div class="col-md-6">
           <select class="form-select" aria-label="Default select example" id="sold_by" multiple>
   
-{% comment %} {% for p_soldby in product.sold_by.all %}
+{% comment %} {% for p_soldby in product_data.sold_by.all %}
  <option  selected>{{p_soldby.firm_name}}</option>
 {% endfor %} {% endcomment %}
 
   {% for sold in solds_by %}
-  <option value={{sold.id}} {%if product|selectedsold_by:sold %} selected {% endif %}>{{sold.firm_name}}</option>
+  <option value={{sold.id}} {%if product_data|selectedsold_by:sold %} selected {% endif %}>{{sold.firm_name}}</option>
     {% endfor %}
 </select>
 <div>
-    {% for p_soldby in product.sold_by.all %}
-    <span>{{p_soldby.firm_name}}<span style="color:red;cursor:pointer" onclick="sold_byCancell({{p_soldby.id}},{{product.id}})">x</span></span>
+    {% for p_soldby in product_data.sold_by.all %}
+    <span>{{p_soldby.firm_name}}<span style="color:red;cursor:pointer" onclick="sold_byCancell({{p_soldby.id}},{{product_data.id}})">x</span></span>
     {% endfor %}
   </div>
 
       </div>
       <div class="col-md-6">
-        <input type="number" class="form-control" placeholder="Enter Price" id="p_price"/ value={{product.price}}>
+        <input type="number" class="form-control" placeholder="Enter Price" id="p_price"/ value={{product_data.price}}>
       </div>
     </div>
 <br>
   <div class="row">      
       <div class="col-md-6">
-        <input type="number" class="form-control" placeholder="Enter Discount Percentage" id="p_discount_percentage"/ value={{product.discount_percentage}}>
+        <input type="number" class="form-control" placeholder="Enter Discount Percentage" id="p_discount_percentage"/ value={{product_data.discount_percentage}}>
       </div>
         <div class="col-md-6">    
   <select class="form-select" aria-label="Default select example" id="p_category" multiple>
 
     
-    {% comment %} {% for p_category in product.category.all%}
+    {% comment %} {% for p_category in product_data.category.all%}
     <option selected>{{p_category.name}}</option>   {% endcomment %}
     {% comment %} {% endfor %} {% endcomment %}
     {% for cat in category %}
-        <option value={{cat.id}} {%if product|selectedcategory:cat %} selected {% endif %}>{{cat.name}}</option>
+        <option value={{cat.id}} {%if product_data|selectedcategory:cat %} selected {% endif %}>{{cat.name}}</option>
     {% endfor %}
   </select>
   <div>
-    {% for p_category in product.category.all%}
-    <span id="cat-{{p_category.id}}-{{product.id}}">{{p_category.name}}<span style="color:red;cursor:pointer" onclick="categoeyCancell({{p_category.id}},{{product.id}})">x</span></span>
+    {% for p_category in product_data.category.all%}
+    <span id="cat-{{p_category.id}}-{{product_data.id}}">{{p_category.name}}<span style="color:red;cursor:pointer" onclick="categoeyCancell({{p_category.id}},{{product_data.id}})">x</span></span>
     {% endfor %}
   </div>
 </div>
@@ -93,12 +93,12 @@
   <div class="row">      
 
       <div class="col-md-6">
-        <input type="number" class="form-control" placeholder="Enter Stock Quantity" id="stock_quantity"/ value={{product.stock_quantity}}>
+        <input type="number" class="form-control" placeholder="Enter Stock Quantity" id="stock_quantity"/ value={{product_data.stock_quantity}}>
       </div>
     </div>
 <br>
       <center>
-        <button type="button" class="btn btn-primary" id="update_product" onclick="update_data({{product.id}})">Update Product</button>
+        <button type="button" class="btn btn-primary" id="update_product" onclick="update_data({{product_data.id}})">Update Product</button>
       </center>
     </div>
   </form>
@@ -114,6 +114,7 @@
 
 
  function update_data(id){
+  console.log(id,"????")
   console.log("save button cicked")
   let name=$('#p_name').val();    
   let text=$('#p_text').val();    
@@ -152,7 +153,7 @@
   form_data.append("description",description);
   form_data.append("sold_by",my_arr_sold_by);
   form_data.append("price",price);
-  form_data.append("category_list",my_arr_cat);
+  form_data.append("category",my_arr_cat);
   form_data.append("discount_percentage",discount_percentage);
   form_data.append("stock_quantity",stock_quantity);
 

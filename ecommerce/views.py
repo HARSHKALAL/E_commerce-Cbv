@@ -11,7 +11,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 
-
 def homepage(request):  
     category_name = request.GET.get('cat')    
     categories=Category.objects.filter(is_deleted=False) 
@@ -26,7 +25,6 @@ def signup(request):
     form=Userform()
     if request.method == "POST":
         form=Userform(request.POST,request.FILES)
-        print(request.POST)
         if form.is_valid():
             print(form)
             form.save()  
@@ -65,11 +63,8 @@ def changepassword(request):
 def editprofile(request):
     if request.method == 'POST':
         edit_form=EditProfileForm(request.POST,request.FILES,instance=request.user)
-        print("edit")
         if edit_form.is_valid():  
-            print("edit")
             edit_form.save()  
-            print("Update success")
             return HttpResponseRedirect("/homepage/")  
         else:
             print(edit_form.errors)
@@ -81,78 +76,57 @@ def product(request,id):
     product=Product.objects.get(id=id)
     return render(request,'enroll/product.html',{'product':product})
     
-def addproduct(request): 
+def addproduct(request):
     solds_by=MerchantFirm.objects.all()
     category=Category.objects.all()
-
-    if request.method == 'POST':
-        p_name=request.POST['name']
-        p_text=request.POST['text']
-        p_description=request.POST['description']
-        p_image=request.FILES['image']
-        p_sold_by=request.POST['sold_by']
-        p_price=request.POST['price']
-        p_discount_percentage=request.POST['discount_percentage']
-        p_category=request.POST['category']
-        p_stock_quantity=request.POST['stock_quantity']
-
-        pro=Product.objects.create(name=p_name,text=p_text,description=p_description,image=p_image,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
-        pro.category.add(p_category)
-        pro.save()
-        pro.sold_by.add(p_sold_by)
-        pro.save()  
-        return HttpResponse("created")
-
+    if request.method == "POST":
+        add_product_data(request.POST,request.FILES,Product)
     return render(request,"enroll/addproduct.html",{'solds_by':solds_by,'category':category})
 
 def update_product(request,id):
     solds_by=MerchantFirm.objects.all()
     category=Category.objects.all()    
-    product=Product.objects.get(id=id)
-
-    print(product.category.all().values_list('id'))
-
+    product_data=Product.objects.get(id=id)
     if request.method == 'POST':
-        print(request.POST)
-        p_name=request.POST['name']
-        p_text=request.POST['text']
-        p_description=request.POST['description']
-        p_image=request.FILES['image']
-        sold_by_old=request.POST['sold_by']
-        p_price=request.POST['price']
-        p_discount_percentage=request.POST['discount_percentage']
-        cat_old=request.POST['category_list']
-        print(cat_old)
-        p_stock_quantity=request.POST['stock_quantity']
+        updateproduct(request.POST,request.FILES,Product,id)
+
+        # p_name=request.POST['name']
+        # p_text=request.POST['text']
+        # p_description=request.POST['description']
+        # p_image=request.FILES['image']
+        # sold_by_old=request.POST['sold_by']
+        # p_price=request.POST['price']
+        # p_discount_percentage=request.POST['discount_percentage']
+        # cat_old=request.POST['category_list']
+        # p_stock_quantity=request.POST['stock_quantity']
 
 
-        cat_updated = json.loads(cat_old)
-        sold_by_updated = json.loads(sold_by_old)
+        # cat_updated = json.loads(cat_old)
+        # sold_by_updated = json.loads(sold_by_old)
 
-        print(cat_updated)
 
-        pro=Product.objects.filter(id=id)
+        # pro=Product.objects.filter(id=id)
         
-        pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
-        pro=pro.first()
+        # pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
+        # pro=pro.first()
         
-        if p_image:
-            pro.image=p_image
-            pro.save()
+        # if p_image:
+        #     pro.image=p_image
+        #     pro.save()
 
-        if cat_updated:
-            pro.category.set(cat_updated)
-            pro.save()
-        
-        if sold_by_updated:
-            pro.sold_by.set(sold_by_updated)
-            pro.save()
+        # if cat_updated:
+        #     pro.category.set(cat_updated)
+        #     pro.save()
 
-    print("Data Received")    
-    return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product':product})
+        # if sold_by_updated:
+        #     pro.sold_by.set(sold_by_updated)
+        #     pro.save()
 
-def delete_product(request,id):
+    return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product_data':product_data})
+
+def delete_product(request,id):    
     delete_product=Product.objects.get(id=id).delete()
+    
     return HttpResponseRedirect("/homepage/")
 
 def remove_category(request,id,p_id):
@@ -167,14 +141,11 @@ def remove_sold_by(request,id,p_id):
 
 
 def cart_product(request,id):
-    print(id)
-    print(request.user.id)
     cart=Cart.objects.get_or_create(user_id=request.user.id,product_id=id)
     return HttpResponse("Created Successfully")
 
 def view_cart(request):
     cart_view=Cart.objects.filter(user=request.user.id)
-
     cart_total_final = Cart.objects.filter(user_id=request.user.id).annotate(sum_total = ExpressionWrapper(F('product__price') * F('quantity'), output_field=DecimalField()))
     final_show = cart_total_final.values("sum_total").annotate(totals=Sum("sum_total"))
     new_try = final_show.aggregate(total=Sum('totals'))
