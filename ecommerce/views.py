@@ -34,16 +34,11 @@ def signup(request):
     return render(request,"enroll/register.html",{'form':form})
 
 def signin(request):
-    loginform=AuthenticationForm()
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password'] 
-        user=authenticate(username=username,password=password)
-        if user is not None:
-            login(request,user)          
-            return HttpResponseRedirect("/homepage/")        
-    else:
-        loginform=AuthenticationForm()
+        a=sign_in(request,request.POST)
+        if a.get('status') == 201:
+            return HttpResponseRedirect("/homepage/")       
+    loginform=AuthenticationForm()
     return render(request,'enroll/login.html',{'loginform':loginform})
 
 def user_logout(request):
@@ -88,45 +83,11 @@ def update_product(request,id):
     category=Category.objects.all()    
     product_data=Product.objects.get(id=id)
     if request.method == 'POST':
-        updateproduct(request.POST,request.FILES,Product,id)
-
-        # p_name=request.POST['name']
-        # p_text=request.POST['text']
-        # p_description=request.POST['description']
-        # p_image=request.FILES['image']
-        # sold_by_old=request.POST['sold_by']
-        # p_price=request.POST['price']
-        # p_discount_percentage=request.POST['discount_percentage']
-        # cat_old=request.POST['category_list']
-        # p_stock_quantity=request.POST['stock_quantity']
-
-
-        # cat_updated = json.loads(cat_old)
-        # sold_by_updated = json.loads(sold_by_old)
-
-
-        # pro=Product.objects.filter(id=id)
-        
-        # pro.update(name=p_name,text=p_text,description=p_description,price=p_price,discount_percentage=p_discount_percentage,stock_quantity=p_stock_quantity)
-        # pro=pro.first()
-        
-        # if p_image:
-        #     pro.image=p_image
-        #     pro.save()
-
-        # if cat_updated:
-        #     pro.category.set(cat_updated)
-        #     pro.save()
-
-        # if sold_by_updated:
-        #     pro.sold_by.set(sold_by_updated)
-        #     pro.save()
-
+        updateproduct(request.POST,request.FILES,Product,id)      
     return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product_data':product_data})
 
 def delete_product(request,id):    
     delete_product=Product.objects.get(id=id).delete()
-    
     return HttpResponseRedirect("/homepage/")
 
 def remove_category(request,id,p_id):
@@ -138,7 +99,6 @@ def remove_sold_by(request,id,p_id):
     product=Product.objects.get(id=p_id)
     product.sold_by.remove(id)    
     return HttpResponse("Deleted")
-
 
 def cart_product(request,id):
     cart=Cart.objects.get_or_create(user_id=request.user.id,product_id=id)
@@ -159,7 +119,6 @@ def remove_cart_Product(request,id):
 def update_cart_Product(request,id):
     if request.method == 'POST':
         add=request.POST['add']
-
         cart_total_final = Cart.objects.filter(user_id=request.user.id).annotate(sum_total = ExpressionWrapper(F('product__price') * F('quantity'), output_field=DecimalField()))
         final_show = cart_total_final.values("sum_total").annotate(totals=Sum("sum_total"))
         new_try = final_show.aggregate(total=Sum('totals'))        

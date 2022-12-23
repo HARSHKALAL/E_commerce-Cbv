@@ -2,6 +2,9 @@ from .models import Product
 from django.core.serializers.json import DjangoJSONEncoder
 from decimal import Decimal
 import json
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate,login
+from django.http import HttpResponseRedirect
 
 def order_json_to_products(order_data):
     list_data = []
@@ -37,12 +40,12 @@ def add_product_data(data,img,klass):
   data.pop("csrfmiddlewaretoken")
   a = klass.objects.create(**{"name":data.pop("name"),"text":data.pop("text"),"description":data.pop("description"),"image":img['image'],"price":data.pop("price"),"discount_percentage":data.pop("discount_percentage"),"stock_quantity":data.pop("stock_quantity")})
   a.category.set(data.pop("category"))
-  a.save()
   a.sold_by.set(data.pop("sold_by"))
   a.save()  
   return a
 
 def updateproduct(data,img,klass,id):
+  print(data)
   data=data.dict()
   data.pop("csrfmiddlewaretoken")
   
@@ -51,8 +54,20 @@ def updateproduct(data,img,klass,id):
 
   b=klass.objects.filter(id=id)
   b.update(**{"name":data.pop("name"),"text":data.pop("text"),"description":data.pop("description"),"price":data.pop("price"),"discount_percentage":data.pop("discount_percentage"),"stock_quantity":data.pop("stock_quantity")})
+  b = b.first()
   b.image=img['image']
   b.category.set(cat_updated)
   b.sold_by.set(sold_by_updated)
   b.save()  
   return b
+
+
+def sign_in(request,data):
+  loginform=AuthenticationForm()
+  username = data['username']
+  password = data['password']
+  user=authenticate(username=username,password=password)
+  if user is not None:
+      login(request,user)          
+      return {"status":201}
+  return {"status":403}

@@ -56,8 +56,7 @@ class Cart(models.Model):
     product=models.ForeignKey(Product,null=True,on_delete=models.CASCADE)
 
     def __str__(self):
-         return self.product.name
-
+         return self.product.name         
 class Order(models.Model):
     user=models.ForeignKey(User,null=True,on_delete=models.CASCADE)
     order_id=models.UUIDField(default = uuid.uuid4,editable=False) 
