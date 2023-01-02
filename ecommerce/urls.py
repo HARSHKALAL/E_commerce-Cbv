@@ -1,14 +1,14 @@
 from django.urls import path
-from .views import signup,homepage,signin,user_logout,changepassword,editprofile,product,addproduct,update_product,remove_category,remove_sold_by,delete_product,cart_product,view_cart,remove_cart_Product,update_cart_Product,confirm_order,my_orders
-
+from .views import Signup,Homepage,LogoutView,editprofile,product,addproduct,update_product,remove_category,remove_sold_by,delete_product,cart_product,view_cart,remove_cart_Product,update_cart_Product,confirm_order,my_orders
+from django.contrib.auth import views as auth_views
 urlpatterns =[     
-    path('',homepage,name="homepage"),
-    path('homepage/',homepage,name="homepage"),
-    path('signup/',signup,name='register'),
-    path('signin/',signin,name="signin"),
+    path('homepage/', Homepage.as_view(), name='homepage'),
+    path('signup/', Signup.as_view(), name='signup'),
+    path('logout/',LogoutView.as_view(),name="logout"),    
+
+
+
     path('editprofile/',editprofile,name="editprofile"),    
-    path('logout/',user_logout,name="logout"),
-    path('changepassword/',changepassword,name="changepassword"),
     path('product/<int:id>/',product,name="product"),
     path('addproduct/',addproduct,name="addproduct"),   
     path('update_product/<int:id>/',update_product,name="update_product"),
@@ -21,5 +21,22 @@ urlpatterns =[
     path('update_cart_Product/<int:id>/',update_cart_Product,name="update_cart_Product"),
     path('confirm_order/',confirm_order,name="confirm_order"),
     path('my_orders/',my_orders,name="my_orders"),
+    path(
+        'change-password/',
+        auth_views.PasswordChangeView.as_view(
+            template_name='enroll/changepassword.html',
+            success_url = '/homepage/'
+        ),
+        name='change_password'
+    ),
 
+    path(
+        'login/',
+        auth_views.LoginView.as_view(
+            template_name='enroll/login.html',
+            success_url = '/homepage/'
+        ),
+        name='login'
+    ),
+    
 ]

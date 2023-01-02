@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import Userform,EditProfileForm
-from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate,login,logout,update_session_auth_hash
 from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 from .models import User,Category,Product,MerchantFirm,Carousel,Cart,Order
@@ -8,52 +8,36 @@ import json
 from django.db.models import Sum,F,DecimalField,ExpressionWrapper,Value
 from .utils import *
 from django.core.serializers.json import DjangoJSONEncoder
-import stripe
-from django.views.decorators.csrf import csrf_exempt
+# import stripe
+# from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import TemplateView
+from django.views.generic import CreateView,FormView,View
+from .models import User
 
-def homepage(request):  
-    category_name = request.GET.get('cat')    
-    categories=Category.objects.filter(is_deleted=False) 
-    carousel_image=Carousel.objects.order_by('image')[0:3]
-    cart_count=Cart.objects.filter(user_id=request.user.id).aggregate(Sum('quantity'))
+class Homepage(TemplateView):
+    model=Category
+    template_name='enroll/homepage.html'
 
-    if category_name:
-        categories=categories.filter(name__icontains=category_name)
-    return render(request,"enroll/homepage.html",{'categories':categories,"carousel_image":carousel_image,"cart_count":cart_count})
+    def get(self, request, *args, **kwargs):
+        category_name = request.GET.get('cat')    
+        categories=Category.objects.filter(is_deleted=False)
+        carousel_image=Carousel.objects.order_by('image')[0:3]
+        cart_count=Cart.objects.filter(user_id=request.user.id).aggregate(Sum('quantity'))
+        if category_name:
+            categories=categories.filter(name__icontains=category_name)
+        context = {'categories':categories,"carousel_image":carousel_image,"cart_count":cart_count}
 
-def signup(request):
-    form=Userform()
-    if request.method == "POST":
-        form=Userform(request.POST,request.FILES)
-        if form.is_valid():
-            print(form)
-            form.save()  
-            form=Userform()
-    else:
-        form=Userform()
-    return render(request,"enroll/register.html",{'form':form})
+        return self.render_to_response(context)
+class Signup(CreateView,FormView):
+    model=User
+    form_class=Userform
+    template_name = 'enroll/register.html'
+    success_url= '/homepage/'   
 
-def signin(request):
-    if request.method == "POST":
-        a=sign_in(request,request.POST)
-        if a.get('status') == 201:
-            return HttpResponseRedirect("/homepage/")       
-    loginform=AuthenticationForm()
-    return render(request,'enroll/login.html',{'loginform':loginform})
-
-def user_logout(request):
-    logout(request)
-    return HttpResponseRedirect('/signin/')
-
-def changepassword(request):
-    if request.method == "POST":
-        change_pass=PasswordChangeForm(data=request.POST,user=request.user)
-        if change_pass.is_valid():
-            change_pass.save()
-            return HttpResponseRedirect('/homepage/')
-    else:
-        change_pass=PasswordChangeForm(user=request.user)
-    return render(request,'enroll/changepassword.html',{'change_pass':change_pass})
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect("/signin/")
 
 def editprofile(request):
     if request.method == 'POST':

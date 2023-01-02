@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate,login
 from django.http import HttpResponseRedirect
 
+
 def order_json_to_products(order_data):
     list_data = []
     for i in range(len(order_data)):
@@ -62,12 +63,4 @@ def updateproduct(data,img,klass,id):
   return b
 
 
-def sign_in(request,data):
-  loginform=AuthenticationForm()
-  username = data['username']
-  password = data['password']
-  user=authenticate(username=username,password=password)
-  if user is not None:
-      login(request,user)          
-      return {"status":201}
-  return {"status":403}
+  
