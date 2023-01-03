@@ -35,13 +35,13 @@
           </div>
           <div class="col-md-6">
             <label for="" class="form-label">Username</label>
-            {{edit_form.username}} {% if edit_form.errors.username %}
+            {{form.username}} {% if edit_form.errors.username %}
             <label class="text-danger">{{edit_form.errors.username}}</label>
             {% endif %}
           </div>
           <div class="col-md-6">
             <label for="" class="form-label">Email</label>
-            {{edit_form.email}} {% if edit_form.errors.email %}
+            {{form.email}} {% if edit_form.errors.email %}
             <label class="text-danger">{{edit_form.errors.email}}</label>
             {% endif %}
           </div>

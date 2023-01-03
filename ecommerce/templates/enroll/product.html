@@ -68,7 +68,7 @@
                     Add to Cart
                   </button>
                 <a href="{% url 'update_product' product.id %}">Update</a>
-                <a href="{% url 'delete_product' product.id %}">Delete</a>
+                <button >Delete</button>
                 
               </div>
               </div>
@@ -85,6 +85,20 @@ function addToCart(id){
 $.ajax({
     type: 'GET',
     url: `/cart_product/${id}/`,
+    success:function(cart_product){ 
+      console.log("Id Send Successfully")
+    }
+    }); 
+}
+
+
+function delete(id){
+
+var token = "{{csrf_token }}";
+$.ajax({
+    type: 'DELETE',
+    headers: { "X-CSRFToken": token },
+    url: `/delete_product/${id}/`,
     success:function(cart_product){ 
       console.log("Id Send Successfully")
     }

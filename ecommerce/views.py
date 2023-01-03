@@ -11,14 +11,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 # import stripe
 # from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
-from django.views.generic import CreateView,FormView,View
+from django.views.generic import CreateView,FormView,View,UpdateView,DetailView,DeleteView
 from .models import User
-
 class Homepage(TemplateView):
     model=Category
     template_name='enroll/homepage.html'
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         category_name = request.GET.get('cat')    
         categories=Category.objects.filter(is_deleted=False)
         carousel_image=Carousel.objects.order_by('image')[0:3]
@@ -26,53 +25,50 @@ class Homepage(TemplateView):
         if category_name:
             categories=categories.filter(name__icontains=category_name)
         context = {'categories':categories,"carousel_image":carousel_image,"cart_count":cart_count}
-
         return self.render_to_response(context)
 class Signup(CreateView,FormView):
     model=User
     form_class=Userform
     template_name = 'enroll/register.html'
-    success_url= '/homepage/'   
+    success_url= '/homepage/'
+class Editprofile(UpdateView):
+    model = User
+    template_name = 'enroll/editprofile.html'
+    form_class=EditProfileForm
+    success_url='/homepage/'
 
-class LogoutView(View):
-    def get(self, request):
-        logout(request)
-        return HttpResponseRedirect("/signin/")
+class ProductView(DetailView):
+    model=Product
+    template_name='enroll/product.html'
+    context_object_name = 'product'
 
-def editprofile(request):
-    if request.method == 'POST':
-        edit_form=EditProfileForm(request.POST,request.FILES,instance=request.user)
-        if edit_form.is_valid():  
-            edit_form.save()  
-            return HttpResponseRedirect("/homepage/")  
-        else:
-            print(edit_form.errors)
-    else:
-        edit_form=EditProfileForm(instance=request.user)
-    return render(request,'enroll/editprofile.html',{'edit_form':edit_form})
-
-def product(request,id):
-    product=Product.objects.get(id=id)
-    return render(request,'enroll/product.html',{'product':product})
-    
-def addproduct(request):
-    solds_by=MerchantFirm.objects.all()
-    category=Category.objects.all()
-    if request.method == "POST":
+class Addproduct(View):    
+    def get(self,request):
+        solds_by=MerchantFirm.objects.all()
+        category=Category.objects.all()
+        context = {'category':category,"solds_by":solds_by}
+        return render(request,"enroll/addproduct.html",context)
+    def post(self,request):
         add_product_data(request.POST,request.FILES,Product)
-    return render(request,"enroll/addproduct.html",{'solds_by':solds_by,'category':category})
+        return render(request,"enroll/addproduct.html")
+
+
 
 def update_product(request,id):
     solds_by=MerchantFirm.objects.all()
-    category=Category.objects.all()    
+    category=Category.objects.all()
     product_data=Product.objects.get(id=id)
     if request.method == 'POST':
         updateproduct(request.POST,request.FILES,Product,id)      
     return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product_data':product_data})
 
-def delete_product(request,id):    
-    delete_product=Product.objects.get(id=id).delete()
-    return HttpResponseRedirect("/homepage/")
+# def delete_product(request,id):    
+#     delete_product=Product.objects.get(id=id).delete()
+#     return HttpResponseRedirect("/homepage/")
+class Delete_product(DeleteView):
+    model=Product    
+    success_url='/homepage/'
+
 
 def remove_category(request,id,p_id):
     product=Product.objects.get(id=p_id)

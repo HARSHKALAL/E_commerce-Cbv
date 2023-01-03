@@ -30,11 +30,13 @@ def total_stock_quantity(order_quantity):
             print(pro.stock_quantity)
             pro.save()    
 
+
 class DecimalEncoder(json.JSONEncoder):
   def default(self, obj):
     if isinstance(obj, Decimal):
       return str(obj)
     return json.JSONEncoder.default(self, obj)
+
 
 def add_product_data(data,img,klass):
   data = data.dict()  
@@ -44,6 +46,7 @@ def add_product_data(data,img,klass):
   a.sold_by.set(data.pop("sold_by"))
   a.save()  
   return a
+
 
 def updateproduct(data,img,klass,id):
   print(data)
