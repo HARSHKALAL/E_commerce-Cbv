@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Signup,Homepage,Editprofile,ProductView,Addproduct,update_product,remove_category,remove_sold_by,Delete_product,cart_product,view_cart,remove_cart_Product,update_cart_Product,confirm_order,my_orders
+from .views import Signup,Homepage,Editprofile,ProductView,Addproduct,update_product,remove_category,remove_sold_by,Delete_product,cart_product,view_cart,remove_cart_Product,update_cart_Product,confirm_order,my_orders,delete_redirect
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import logout_then_login
 
@@ -10,6 +10,8 @@ urlpatterns =[
     path('product/<int:pk>/',ProductView.as_view(),name="product"),
     path('addproduct/',Addproduct.as_view(),name="addproduct"),   
 
+
+    path('delete_redirect/',delete_redirect,name="delete_redirect"),
     path('update_product/<int:id>/',update_product,name="update_product"),
     path('delete_product/<int:pk>/',Delete_product.as_view(),name="delete_product"),   
     path('remove_category/<int:id>/<int:p_id>/',remove_category,name="remove_category"),

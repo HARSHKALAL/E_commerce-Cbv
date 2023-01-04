@@ -26,6 +26,7 @@ class Homepage(TemplateView):
             categories=categories.filter(name__icontains=category_name)
         context = {'categories':categories,"carousel_image":carousel_image,"cart_count":cart_count}
         return self.render_to_response(context)
+
 class Signup(CreateView,FormView):
     model=User
     form_class=Userform
@@ -62,12 +63,13 @@ def update_product(request,id):
         updateproduct(request.POST,request.FILES,Product,id)      
     return render(request,"enroll/update_product.html",{'solds_by':solds_by,'category':category,'product_data':product_data})
 
-# def delete_product(request,id):    
-#     delete_product=Product.objects.get(id=id).delete()
-#     return HttpResponseRedirect("/homepage/")
 class Delete_product(DeleteView):
     model=Product    
-    success_url='/homepage/'
+    success_url="/delete_redirect"
+
+def delete_redirect(request):
+    print("?????")
+    return render(request,"enroll/homepage.html")
 
 
 def remove_category(request,id,p_id):
